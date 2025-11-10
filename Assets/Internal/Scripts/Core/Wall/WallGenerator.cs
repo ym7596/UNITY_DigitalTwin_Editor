@@ -4,18 +4,15 @@ using UnityEngine;
 
 public class WallGenerator : MonoBehaviour
 {
+    [SerializeField] private WallDataSO _wallDataSO;
     [SerializeField] private Transform _wallParent;
-    [SerializeField] private float _wallThickness = 2f;
-    [SerializeField] private float _wallHeight = 10f;
-    [SerializeField] private Material _wallMaterial;
-    
+
     private UIManager _uiManager;
     private WallPathManager _wallPathManager;
     
     private void Awake()
     {
-
-        _wallPathManager = new WallPathManager(_wallMaterial, _wallParent, _wallHeight, _wallThickness);
+        _wallPathManager = new WallPathManager(_wallDataSO.wallMaterial, _wallParent, _wallDataSO.wallHeight, _wallDataSO.wallThickness);
     }
 
     public void SetUIManager(UIManager uiManager)

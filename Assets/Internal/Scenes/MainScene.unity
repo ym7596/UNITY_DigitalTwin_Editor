@@ -340,10 +340,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50581cae04d49f248bd4f9fcfe19d3d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WallGenerator
+  _wallDataSO: {fileID: 11400000, guid: 0325df045d1495e4c90bd5fb0b5415ac, type: 2}
   _wallParent: {fileID: 266614312}
-  _wallThickness: 2
-  _wallHeight: 10
-  _wallMaterial: {fileID: 2100000, guid: 40dad935cbc16fd4c84bda1c66d574ff, type: 2}
 --- !u!1 &398405613
 GameObject:
   m_ObjectHideFlags: 0
