@@ -30,7 +30,8 @@ public class WallGenerator : MonoBehaviour
     public void GenerateWallPath(List<Vector2> path)
     {
         if (path == null || path.Count < 2) return;
-
+        
+        _prevEndQuad = null;
         _miterNormals.Clear();
         for (int i = 0; i < path.Count; i++)
         {
