@@ -9,7 +9,7 @@ public class WallGenerator : MonoBehaviour
     [SerializeField] private float _wallHeight = 10f;
     [SerializeField] private Material _wallMaterial;
     
-    [SerializeField] private UIDrawGridLine _drawGridLine;
+    private UIManager _uiManager;
     
     private Vector3[] _prevEndQuad = null;
     private HashSet<LineKey> _generatedLines = new HashSet<LineKey>();
@@ -20,16 +20,11 @@ public class WallGenerator : MonoBehaviour
     }
     
     private Dictionary<Vector2, Vector3> _miterNormals = new Dictionary<Vector2, Vector3>();
+    
 
-
-    private void OnEnable()
+    public void SetUIManager(UIManager uiManager)
     {
-        _drawGridLine.OnCreateLinePath += GenerateWallPath;   
-    }
-
-    private void OnDisable()
-    {
-        _drawGridLine.OnCreateLinePath -= GenerateWallPath;  
+        _uiManager = uiManager;
     }
 
     public void GenerateWallPath(List<Vector2> path)

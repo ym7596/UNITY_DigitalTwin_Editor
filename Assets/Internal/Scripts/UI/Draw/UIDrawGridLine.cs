@@ -71,7 +71,6 @@ public class UIDrawGridLine : Graphic
             case InputActionPhase.Performed:
             {
                 _mouseScreenPosition = context.ReadValue<Vector2>();
-                Debug.Log(_mouseScreenPosition);
             }
                 break;
             default:
