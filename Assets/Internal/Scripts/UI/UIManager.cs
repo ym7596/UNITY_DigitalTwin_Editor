@@ -5,7 +5,8 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private UIDrawGridLine _drawGridLine;
-    
+
+    [SerializeField] private GameObject _drawPanel;
     private MainPresenter _presenter;
     
     void Start()
@@ -31,5 +32,11 @@ public class UIManager : MonoBehaviour
     private void WallCreatorEventChain(List<Vector2> path)
     {
         _presenter.GenerateWallPath(path);
+    }
+
+
+    public void ShowDrawPanel(bool isOn)
+    {
+        _drawPanel.SetActive(isOn);
     }
 }

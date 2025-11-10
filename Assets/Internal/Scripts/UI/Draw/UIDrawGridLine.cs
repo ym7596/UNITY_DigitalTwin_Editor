@@ -8,6 +8,7 @@ public class UIDrawGridLine : Graphic
 {
     [SerializeField] private Camera _uiCamera;
     [SerializeField] private UIDrawPoint _pointPrefab;
+    [SerializeField] private RectTransform _drawZone;
 
     [SerializeField] private float _pointSize = 10f;
     [SerializeField] private float _lineThickness = 10f;
@@ -81,6 +82,9 @@ public class UIDrawGridLine : Graphic
     public void OnLeftButtonClicked(InputAction.CallbackContext context)
     {
         var phase = context.phase;
+
+        if (IsInDrawZone(_drawZone, _mouseScreenPosition) == false)
+            return;
 
         switch (phase)
         {
