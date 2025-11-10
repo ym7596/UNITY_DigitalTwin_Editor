@@ -136,6 +136,15 @@ public partial class @TwinInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MouseDelta"",
+                    ""type"": ""Value"",
+                    ""id"": ""83c72db9-2324-492e-9a30-53329c44d7c8"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -174,17 +183,6 @@ public partial class @TwinInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""31de5b1d-2c11-49f0-af5b-b91d30ca4ff1"",
-                    ""path"": ""<Mouse>/position"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""MousePos"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""c3bf05cf-9443-4f75-9b11-d386a880f4c3"",
                     ""path"": ""<Pointer>/position"",
                     ""interactions"": """",
@@ -204,6 +202,17 @@ public partial class @TwinInput: IInputActionCollection2, IDisposable
                     ""action"": ""MiddleClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5283ca79-ac38-45dd-bd54-8fa34640ad2d"",
+                    ""path"": ""<Pointer>/delta"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseDelta"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -217,6 +226,7 @@ public partial class @TwinInput: IInputActionCollection2, IDisposable
         m_TwinMap_WheelDrag = m_TwinMap.FindAction("WheelDrag", throwIfNotFound: true);
         m_TwinMap_MousePos = m_TwinMap.FindAction("MousePos", throwIfNotFound: true);
         m_TwinMap_MiddleClick = m_TwinMap.FindAction("MiddleClick", throwIfNotFound: true);
+        m_TwinMap_MouseDelta = m_TwinMap.FindAction("MouseDelta", throwIfNotFound: true);
     }
 
     ~@TwinInput()
@@ -302,6 +312,7 @@ public partial class @TwinInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_TwinMap_WheelDrag;
     private readonly InputAction m_TwinMap_MousePos;
     private readonly InputAction m_TwinMap_MiddleClick;
+    private readonly InputAction m_TwinMap_MouseDelta;
     /// <summary>
     /// Provides access to input actions defined in input action map "TwinMap".
     /// </summary>
@@ -333,6 +344,10 @@ public partial class @TwinInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "TwinMap/MiddleClick".
         /// </summary>
         public InputAction @MiddleClick => m_Wrapper.m_TwinMap_MiddleClick;
+        /// <summary>
+        /// Provides access to the underlying input action "TwinMap/MouseDelta".
+        /// </summary>
+        public InputAction @MouseDelta => m_Wrapper.m_TwinMap_MouseDelta;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -374,6 +389,9 @@ public partial class @TwinInput: IInputActionCollection2, IDisposable
             @MiddleClick.started += instance.OnMiddleClick;
             @MiddleClick.performed += instance.OnMiddleClick;
             @MiddleClick.canceled += instance.OnMiddleClick;
+            @MouseDelta.started += instance.OnMouseDelta;
+            @MouseDelta.performed += instance.OnMouseDelta;
+            @MouseDelta.canceled += instance.OnMouseDelta;
         }
 
         /// <summary>
@@ -400,6 +418,9 @@ public partial class @TwinInput: IInputActionCollection2, IDisposable
             @MiddleClick.started -= instance.OnMiddleClick;
             @MiddleClick.performed -= instance.OnMiddleClick;
             @MiddleClick.canceled -= instance.OnMiddleClick;
+            @MouseDelta.started -= instance.OnMouseDelta;
+            @MouseDelta.performed -= instance.OnMouseDelta;
+            @MouseDelta.canceled -= instance.OnMouseDelta;
         }
 
         /// <summary>
@@ -475,5 +496,12 @@ public partial class @TwinInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMiddleClick(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "MouseDelta" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMouseDelta(InputAction.CallbackContext context);
     }
 }

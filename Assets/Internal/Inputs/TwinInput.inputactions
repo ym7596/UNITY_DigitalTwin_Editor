@@ -50,6 +50,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "MouseDelta",
+                    "type": "Value",
+                    "id": "83c72db9-2324-492e-9a30-53329c44d7c8",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -88,17 +97,6 @@
                 },
                 {
                     "name": "",
-                    "id": "31de5b1d-2c11-49f0-af5b-b91d30ca4ff1",
-                    "path": "<Mouse>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "MousePos",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "c3bf05cf-9443-4f75-9b11-d386a880f4c3",
                     "path": "<Pointer>/position",
                     "interactions": "",
@@ -116,6 +114,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "MiddleClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5283ca79-ac38-45dd-bd54-8fa34640ad2d",
+                    "path": "<Pointer>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MouseDelta",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
