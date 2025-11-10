@@ -20,6 +20,9 @@ public class UIDrawGridLine : Graphic
     private Vector2 _mouseScreenPosition = Vector2.zero;
 
     public event Action<Vector2, Vector2> OnAction_LineWall;
+    public event Action<List<Vector2>> OnCreateLinePath;
+    
+    
     
     protected override void OnPopulateMesh(VertexHelper vh)
     {
@@ -91,6 +94,13 @@ public class UIDrawGridLine : Graphic
 
                 _allPaths[^1].Add(_mouseLocalPosition);
                 CreatePoint(_mouseLocalPosition, _pointColor);
+
+                if (_allPaths[^1].Count >= 2)
+                {
+                    var path = _allPaths[^1];
+                    OnCreateLinePath?.Invoke(path);
+                }
+                
                 SetVerticesDirty();
             }
                 break;
