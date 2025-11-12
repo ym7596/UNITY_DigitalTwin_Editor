@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.fatraccoon.cadtounity": {
+      "version": "https://github.com/ym7596/Package_CadToUnity_FatRaccoon.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "3d92caafd3d0b820dccb55ecedebb8717701f935"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
