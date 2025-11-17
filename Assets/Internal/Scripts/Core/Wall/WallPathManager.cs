@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class WallPathManager
@@ -8,6 +9,7 @@ public class WallPathManager
     private Transform _transform;
     private float _wallHeight;
     private float _wallThickness;
+    private float _magnification;
 
     private HashSet<LineKey> _generatedLines;
     private HashSet<Vector2Int> _alreadyCorrectedPoints;
@@ -17,12 +19,13 @@ public class WallPathManager
     private Vector2Int ToGridKey(Vector2 v, float scale = 1000f) =>
         new Vector2Int(Mathf.RoundToInt(v.x * scale), Mathf.RoundToInt(v.y * scale));
     
-    public WallPathManager(Material wallMaterial, Transform transform, float wallHeight,float wallThickness)
+    public WallPathManager(Material wallMaterial, Transform transform, float wallHeight,float wallThickness, float magnification)
     {
         _wallMaterial = wallMaterial;
         _transform = transform;
         _wallHeight = wallHeight;
         _wallThickness = wallThickness;
+        _magnification = magnification;
         _wallSegmentsByPoint = new Dictionary<Vector2Int, List<WallSegment>>();
         _intersectionsByPoint = new Dictionary<Vector2Int, List<WallIntersectionData>>();
         _generatedLines = new HashSet<LineKey>();
@@ -76,8 +79,8 @@ public class WallPathManager
         int cnt = path.Count;
         for (int i = 0; i < cnt - 1; i++)
         {
-            Vector2 a = path[i] * 0.1f; //*0.1씩을해야 길이가 맞다 
-            Vector2 b = path[i + 1] * 0.1f;
+            Vector2 a = path[i] * _magnification; 
+            Vector2 b = path[i + 1] * _magnification;
             var key = new LineKey(a, b);
             if (_generatedLines.Add(key) == false)
                 continue;
@@ -252,6 +255,150 @@ public class WallPathManager
             IsStart = isStart
         });
     }
+    
+    #region LineRenderer Fix
+      public List<List<Vector2>> LineRendererToList(LineRenderer[] lineRenderers)
+    {
+        HashSet<string> uniquePaths = new HashSet<string>();
+        List<List<Vector2>> newPaths = new List<List<Vector2>>();
+        foreach (var line in lineRenderers)
+        {
+            List<Vector2> path = new List<Vector2>();
+
+            for (int i = 0; i < line.positionCount; i++)
+            {
+                Vector3 pos = line.GetPosition(i);
+                path.Add(new Vector2(pos.x, pos.z));
+            }
+            
+            if (path.Count >= 2)
+            {
+                // 각 선의 Start와 End를 정렬하여 고유 키 생성
+                Vector2 startPoint = path[0];
+                Vector2 endPoint = path[path.Count - 1];
+
+                // start와 end를 정렬하여 중복 방지 (작은 좌표가 항상 먼저 오도록)
+                string pathKey = CreatePathKey(startPoint, endPoint);
+
+                // 중복되지 않은 경우만 추가
+                if (uniquePaths.Add(pathKey))
+                {
+                    newPaths.Add(path);
+                }
+            }
+        }
+
+        return MergeConnectedPaths(newPaths);;
+    }
+    
+    private string CreatePathKey(Vector2 point1, Vector2 point2)
+    {
+        // 두 점을 정렬하여 항상 작은 좌표가 먼저 오도록 키를 생성
+        if (point1.x < point2.x || (point1.x == point2.x && point1.y < point2.y))
+        {
+            return $"{point1.x},{point1.y}:{point2.x},{point2.y}";
+        }
+        else
+        {
+            return $"{point2.x},{point2.y}:{point1.x},{point1.y}";
+        }
+    }
+    
+    private List<List<Vector2>> MergeConnectedPaths(List<List<Vector2>> paths)
+    {
+        List<List<Vector2>> mergedPaths = new List<List<Vector2>>();
+
+        // 연결 상태 추적
+        while (paths.Count > 0) // 아직 처리하지 않은 경로가 있을 때까지 반복
+        {
+            var mergedPath = new List<Vector2>(paths[0]);
+            paths.RemoveAt(0); // 첫 번째 경로를 처리
+
+            bool merged;
+
+            do
+            {
+                merged = false;
+                for (int i = paths.Count - 1; i >= 0; i--) // 뒤에서부터 검사
+                {
+                    var path = paths[i];
+
+                    if (CanMergePaths(mergedPath, path, out bool reverse))
+                    {
+                        if (reverse)
+                        {
+                            path.Reverse(); // 방향이 반대라면 뒤집음
+                        }
+                        mergedPath = MergeTwoPaths(mergedPath, path);
+                        paths.RemoveAt(i); // 이 경로는 처리되었으므로 제거
+                        merged = true;
+                    }
+                }
+            }
+            while (merged); // 더 이상 병합할 수 없을 때까지 반복
+
+            mergedPaths.Add(mergedPath); // 병합된 경로를 결과에 추가
+        }
+
+        return mergedPaths;
+
+    }
+
+    private bool CanMergePaths(List<Vector2> path1, List<Vector2> path2, out bool reverse)
+    {
+        reverse = false;
+
+        // 병합 가능 조건: 경로 끝-끝 또는 끝-시작이 일치하는 경우
+        if (path1[^1] == path2[0]) // path1의 끝과 path2의 시작
+        {
+            return true;
+        }
+        if (path1[0] == path2[^1]) // path1의 시작과 path2의 끝
+        {
+            reverse = true; // 방향이 반대인 경우
+            return true;
+        }
+        if (path1[^1] == path2[^1]) // path1의 끝과 path2의 끝
+        {
+            reverse = true; // 방향이 반대인 경우
+            return true;
+        }
+        if (path1[0] == path2[0]) // path1의 시작과 path2의 시작
+        {
+            reverse = true; // 방향이 동일하지 않은 경우
+            return true;
+        }
+
+        return false;
+    }
+
+    private List<Vector2> MergeTwoPaths(List<Vector2> path1, List<Vector2> path2)
+    {
+        // 병합 로직: 연결되는 위치에 따라 병합
+        if (path1[^1] == path2[0])
+        {
+            path1.AddRange(path2.Skip(1)); // 중복된 점을 제외하고 추가
+        }
+        else if (path1[0] == path2[^1])
+        {
+            path2.AddRange(path1.Skip(1)); // 중복된 점을 제외하고 추가
+            return path2; // 새 path2를 반환
+        }
+        else if (path1[^1] == path2[^1])
+        {
+            path2.Reverse(); // path2를 뒤집고 병합
+            path1.AddRange(path2.Skip(1));
+        }
+        else if (path1[0] == path2[0])
+        {
+            path1.Reverse(); // path1을 뒤집고 병합
+            path1.AddRange(path2.Skip(1));
+        }
+
+        return path1;
+    }
+    
+    #endregion
 }
 
 public class WallIntersectionData

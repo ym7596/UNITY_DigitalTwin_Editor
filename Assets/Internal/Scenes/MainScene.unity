@@ -492,6 +492,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WallGenerator
   _wallDataSO: {fileID: 11400000, guid: 0325df045d1495e4c90bd5fb0b5415ac, type: 2}
   _wallParent: {fileID: 266614312}
+  _dwgPluginSetting: {fileID: 11400000, guid: 775b819f0a309594aac149d3117d336c, type: 2}
+  autoLoad: 1
+  loadType: 0
+  drawType: 0
+  isBlockPrefab: 0
+  fileName: test
+  url: 
 --- !u!1 &301265144
 GameObject:
   m_ObjectHideFlags: 0
@@ -2894,7 +2901,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 50, y: 1, z: 50}
+  m_LocalScale: {x: 25, y: 1, z: 25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 793613975}
