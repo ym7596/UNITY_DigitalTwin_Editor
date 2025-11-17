@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class WallPathManager
@@ -10,6 +12,10 @@ public class WallPathManager
     private float _wallHeight;
     private float _wallThickness;
     private float _magnification;
+    
+    private CancellationTokenSource _cts;
+    
+    private Vector3 _medianPosition = Vector3.zero;
 
     private HashSet<LineKey> _generatedLines;
     private HashSet<Vector2Int> _alreadyCorrectedPoints;
@@ -18,6 +24,8 @@ public class WallPathManager
     private Vector3 V2ToV3(Vector2 v) => new Vector3(v.x, 0f, v.y);
     private Vector2Int ToGridKey(Vector2 v, float scale = 1000f) =>
         new Vector2Int(Mathf.RoundToInt(v.x * scale), Mathf.RoundToInt(v.y * scale));
+    
+    public List<List<Vector2>> AllPaths { get; private set; } = new List<List<Vector2>>();
     
     public WallPathManager(Material wallMaterial, Transform transform, float wallHeight,float wallThickness, float magnification)
     {
@@ -31,8 +39,21 @@ public class WallPathManager
         _generatedLines = new HashSet<LineKey>();
         _alreadyCorrectedPoints = new HashSet<Vector2Int>();
     }
+
+    public void SetMedianPosition(Vector3 medianPosition)
+    {
+        _medianPosition = medianPosition;
+    }
     
-    public WallSegment CreateWallMeshBasic(Vector3 start, Vector3 end, Vector3 perpendicular, float halfThickness)
+    public void CreateWallByDwgFile(List<List<Vector2>> paths)
+    {
+        foreach (var path in paths)
+        {
+            CreateWallByLineEditor(path);
+        }
+    }
+    
+    private WallSegment CreateWallMeshBasic(Vector3 start, Vector3 end, Vector3 perpendicular, float halfThickness)
     {
         Vector3 up = Vector3.up * _wallHeight;
 

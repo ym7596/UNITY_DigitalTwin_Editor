@@ -83,7 +83,11 @@ public class WallGenerator : MonoBehaviour
         SetLineRendererSizePosition(allLineRenderer, _medianPosition, _wallDataSO.magnificationRate);
         
         Debug.Log(_medianPosition);
- 
+        _wallPathManager.SetMedianPosition(_medianPosition);
+        _wallPathManager.CreateWallByDwgFile(lrList);
+        _wallPathManager.FixAllIntersections();
+        
+        _wallParent.position = _medianPosition;
         return dwgRawObject;
     }
 
