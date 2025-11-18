@@ -39,4 +39,9 @@ public class UIManager : MonoBehaviour
     {
         _drawPanel.SetActive(isOn);
     }
+
+    public void SetPathData(List<List<Vector2>> paths, Vector3 medianPosition)
+    {
+        _drawGridLine.SetPathsData(paths, medianPosition);
+    }
 }

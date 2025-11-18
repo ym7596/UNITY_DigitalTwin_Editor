@@ -16,10 +16,12 @@ public class UIDrawGridLine : Graphic
     [SerializeField] private Color _lineColor = Color.green;
     [SerializeField] private Color _previewColor = new Color(0, 1, 1, 0.5f);
 
+    private List<List<UIDrawPoint>> _allPoints = new List<List<UIDrawPoint>>();
     private List<List<Vector2>> _allPaths = new();
     private Vector2 _mouseLocalPosition;
     private Vector2 _mouseScreenPosition = Vector2.zero;
 
+    private float _uiScale = 15f;
     public event Action<Vector2, Vector2> OnAction_LineWall;
     public event Action<List<Vector2>> OnCreateLinePath;
     
@@ -61,6 +63,57 @@ public class UIDrawGridLine : Graphic
     private bool IsInDrawZone(RectTransform drawZone, Vector2 screenPos)
     {
         return RectTransformUtility.RectangleContainsScreenPoint(drawZone, screenPos, _uiCamera);
+    }
+
+    public void SetPathsData(List<List<Vector2>> paths, Vector3 medianPosition)
+    {  
+        _allPaths.Clear();
+        
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            Destroy(transform.GetChild(i).gameObject);
+        }
+
+        if (paths == null || paths.Count == 0)
+            return;
+        
+        Vector2 min = new Vector2(float.MaxValue, float.MaxValue);
+        Vector2 max = new Vector2(float.MinValue, float.MinValue);
+
+        foreach (var path in paths)
+        {
+            if (path == null) continue;
+
+            foreach (var p in path)
+            {
+                if (p.x < min.x) min.x = p.x;
+                if (p.y < min.y) min.y = p.y;
+                if (p.x > max.x) max.x = p.x;
+                if (p.y > max.y) max.y = p.y;
+            }
+        }
+
+        Vector2 boundsCenter = (min + max) * 0.5f;
+        
+        foreach (var path in paths)
+        {
+            if (path == null || path.Count == 0)
+                continue;
+
+            var newPath = new List<Vector2>();
+
+            foreach (var p in path)
+            {
+                Vector2 localPos = (p - boundsCenter) * _uiScale;
+
+                newPath.Add(localPos);
+                CreatePoint(localPos, _pointColor);
+            }
+
+            _allPaths.Add(newPath);
+        }
+
+        SetVerticesDirty();
     }
 
     public void OnMousePosition(InputAction.CallbackContext context)

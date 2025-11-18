@@ -88,6 +88,8 @@ public class WallGenerator : MonoBehaviour
         _wallPathManager.FixAllIntersections();
         
         _wallParent.position = _medianPosition;
+        
+        _uiManager.SetPathData(lrList, _medianPosition);
         return dwgRawObject;
     }
 
