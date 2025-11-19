@@ -26,6 +26,8 @@ public class WallPathManager
         new Vector2Int(Mathf.RoundToInt(v.x * scale), Mathf.RoundToInt(v.y * scale));
     
     public List<List<Vector2>> AllPaths { get; private set; } = new List<List<Vector2>>();
+    public Dictionary<int, List<WallSegment>> WallSegmentsByPath { get; private set; } = new Dictionary<int, List<WallSegment>>();
+    public event Action<int> OnPathChanged;
     
     public WallPathManager(Material wallMaterial, Transform transform, float wallHeight,float wallThickness, float magnification)
     {
@@ -94,6 +96,57 @@ public class WallPathManager
             vertices = mesh.vertices,
         };
     }
+    private void CreateWallByPathWithId(List<Vector2> path, int pathId)
+    {
+        RegisterPathWithId(path, pathId);
+    
+        int cnt = path.Count;
+        for (int i = 0; i < cnt - 1; i++)
+        {
+            Vector2 a = path[i] * _magnification; //해당부분 컨트롤할 수 있게 수치화
+            Vector2 b = path[i + 1] * _magnification;
+            var key = new LineKey(a, b);
+            if (_generatedLines.Add(key) == false)
+                continue;
+
+            Vector3 start = V2ToV3(a);
+            Vector3 end = V2ToV3(b);
+            Vector2Int keyA = ToGridKey(a);
+            Vector2Int keyB = ToGridKey(b);
+            
+            Vector3 direction = (end - start).normalized;
+            Vector3 perpendicular = Vector3.Cross(Vector3.up, direction).normalized;
+            float halfThickness = _wallThickness / 2f;
+            
+            WallSegment segment = CreateWallMeshBasic(start, end, perpendicular, halfThickness);
+            
+            if (!WallSegmentsByPath.ContainsKey(pathId))
+            {
+                WallSegmentsByPath[pathId] = new List<WallSegment>();
+            }
+            WallSegmentsByPath[pathId].Add(segment);
+            
+            StoreIntersectionData(keyA, start, direction, perpendicular, halfThickness, segment, true);
+            StoreIntersectionData(keyB, end, direction, perpendicular, halfThickness, segment, false);
+        }
+    }
+    
+    private void RegisterPathWithId(List<Vector2> path, int pathId)
+    {
+        while (AllPaths.Count <= pathId)
+        {
+            AllPaths.Add(null);
+        }
+        
+        AllPaths[pathId] = path;
+        
+        if (WallSegmentsByPath.ContainsKey(pathId) == false)
+        {
+            WallSegmentsByPath[pathId] = new List<WallSegment>();
+        }
+        
+        OnPathChanged?.Invoke(pathId);
+    }
     
     public void CreateWallByLineEditor(List<Vector2> path)
     {
@@ -110,25 +163,292 @@ public class WallPathManager
             Vector3 end = V2ToV3(b);
             Vector2Int keyA = ToGridKey(a);
             Vector2Int keyB = ToGridKey(b);
-
-            // 방향 벡터와 수직 벡터 계산
+            
             Vector3 direction = (end - start).normalized;
             Vector3 perpendicular = Vector3.Cross(Vector3.up, direction).normalized;
             float halfThickness = _wallThickness / 2f;
-
-            // 기본 벽 생성
+            
             WallSegment segment = CreateWallMeshBasic(start, end, perpendicular, halfThickness);
             
-            // 시작점과 끝점에 대한 세그먼트 저장
-            RegisterSegmentAtPoint(keyA, segment, true);  // 시작점
-            RegisterSegmentAtPoint(keyB, segment, false); // 끝점
+            RegisterSegmentAtPoint(keyA, segment, true);
+            RegisterSegmentAtPoint(keyB, segment, false); 
             
-            // 교차점 데이터 저장
             StoreIntersectionData(keyA, start, direction, perpendicular, halfThickness, segment, true);
             StoreIntersectionData(keyB, end, direction, perpendicular, halfThickness, segment, false);
         }
     }
     
+    public void CreateWallByLineEditorPath(List<Vector2> path, int pathId)
+    {
+        AllPaths.Add(path);
+        CreateWallByPathWithId(path, pathId);
+    }
+
+    #region Wall Update
+
+    public void DisableWallPath(List<Vector2> disablePath, int pathId)
+    {
+        Debug.Log($"선삭제함수 호출 : {disablePath} 아이디 : {pathId}");
+        if (pathId >= 0 && pathId < AllPaths.Count)
+        {
+            Debug.Log($"선삭제함수 호출2 : {disablePath} 아이디 : {pathId}");
+            if (WallSegmentsByPath.TryGetValue(pathId, out List<WallSegment> wallSegments) && wallSegments != null)
+            {
+                Debug.Log($"선삭제함수 호출3 : {wallSegments.Count}");
+                for (int i = 0; i < wallSegments.Count; i++)
+                {
+                    int startIdx = i;
+                    int endIdx = i + 1;
+                    
+                    if (startIdx < disablePath.Count && endIdx < disablePath.Count)
+                    {
+                        Vector2 point1 = disablePath[startIdx];
+                        Vector2 point2 = disablePath[endIdx];
+
+                        WallSegment segment = wallSegments[i];
+                        if (segment.go != null)
+                        {
+                            segment.go.SetActive(false);
+                            Debug.Log($"Wall segment from {point1} to {point2} has been disabled.");
+                        }
+                        if (segment.MatchesPath(point1, point2))
+                        {
+                         
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"No wall segments found for path ID {pathId}");
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Invalid path ID: {pathId}");
+        }
+    }
+
+    public void DisableWallByPoint(Vector2Int point)
+    {
+        if (_intersectionsByPoint.TryGetValue(point, out var intersections) == false)
+        {
+            Debug.LogWarning($"No walls found for point {point}.");
+            return;
+        }
+
+        foreach (var intersection in intersections)
+        {
+            if (intersection.Segment != null && intersection.Segment.go != null)
+            {
+                intersection.Segment.go.SetActive(false);
+            }
+        }
+    }
+    
+    public void EnableWallByPoint(Vector2Int point)
+    {
+        if (_intersectionsByPoint.TryGetValue(point, out var intersectionList) == false)
+        {
+            Debug.LogWarning($"No walls found for point {point}.");
+            return;
+        }
+
+        // 점과 연결된 모든 벽 활성화
+        foreach (var intersection in intersectionList)
+        {
+            if (intersection.Segment != null && intersection.Segment.go != null)
+            {
+                intersection.Segment.go.SetActive(true);
+                Debug.Log($"Enabled wall segment at point {point}.");
+            }
+        }
+    }
+
+    public void UpdateWallVerticesByPath(List<Vector2> updatedPath, int pathId)
+    {
+        if (pathId >= 0 && pathId < AllPaths.Count)
+        {
+            List<Vector2> oldPath = new List<Vector2>(AllPaths[pathId]);
+            AllPaths[pathId] = updatedPath;
+            if (WallSegmentsByPath.TryGetValue(pathId, out List<WallSegment> wallSegments) && wallSegments != null)
+            {
+                for (int i = 0; i < wallSegments.Count; i++)
+                {
+                    int startIdx = i;
+                    int endIdx = i + 1;
+                    
+                    if (startIdx < oldPath.Count && endIdx < oldPath.Count && 
+                        startIdx < updatedPath.Count && endIdx < updatedPath.Count)
+                    {
+                        Vector2 oldStart = oldPath[startIdx] * 0.5f;
+                        Vector2 oldEnd = oldPath[endIdx] * 0.5f;
+                        Vector2 newStart = updatedPath[startIdx] * 0.5f;
+                        Vector2 newEnd = updatedPath[endIdx] * 0.5f;
+                        
+                        Vector3 startOffset = V2ToV3(newStart) - V2ToV3(oldStart);
+                        Vector3 endOffset = V2ToV3(newEnd) - V2ToV3(oldEnd);
+
+                        WallSegment segment = wallSegments[i];
+                        
+                        UpdateSegmentVertices(segment, startOffset, endOffset);
+                        UpdateIntersectionData(segment, oldStart, oldEnd, newStart, newEnd);
+                    }
+                }
+                ResetCorrectedPoints();
+                FixAllIntersections();
+            }
+        }
+    }
+
+    private void UpdateSegmentVertices(WallSegment segment, Vector3 startOffset, Vector3 endOffset)
+    {
+        Vector3[] newVertices = new Vector3[segment.vertices.Length];
+        
+        newVertices[0] = segment.vertices[0] + startOffset; 
+        newVertices[1] = segment.vertices[1] + startOffset; 
+        newVertices[4] = segment.vertices[4] + startOffset;
+        newVertices[5] = segment.vertices[5] + startOffset; 
+        
+        newVertices[2] = segment.vertices[2] + endOffset; 
+        newVertices[3] = segment.vertices[3] + endOffset; 
+        newVertices[6] = segment.vertices[6] + endOffset; 
+        newVertices[7] = segment.vertices[7] + endOffset; 
+        
+        segment.vertices = newVertices;
+        var m = segment.meshFilter.sharedMesh;
+        m.vertices = segment.vertices;
+        m.RecalculateNormals();
+    }
+    
+    private void UpdateIntersectionData(WallSegment segment, Vector2 oldStart, Vector2 oldEnd, 
+                                       Vector2 newStart, Vector2 newEnd)
+    {
+        Vector2Int oldStartKey = ToGridKey(oldStart);
+        Vector2Int oldEndKey = ToGridKey(oldEnd);
+        Vector2Int newStartKey = ToGridKey(newStart);
+        Vector2Int newEndKey = ToGridKey(newEnd);
+        
+        if (oldStartKey == newStartKey && oldEndKey == newEndKey)
+        {
+            UpdateIntersectionPosition(segment, true, V2ToV3(newStart));
+            UpdateIntersectionPosition(segment, false, V2ToV3(newEnd));
+        }
+        else
+        {
+            if (oldStartKey != newStartKey)
+            {
+                MoveIntersectionData(segment, true, oldStartKey, newStartKey, V2ToV3(newStart));
+            }
+            if (oldEndKey != newEndKey)
+            {
+                MoveIntersectionData(segment, false, oldEndKey, newEndKey, V2ToV3(newEnd));
+            }
+        }
+    }
+
+    private void UpdateIntersectionPosition(WallSegment segment, bool isStart, Vector3 newPosition)
+    {
+        Vector2Int key = ToGridKey(new Vector2(newPosition.x, newPosition.z));
+        
+        if (_intersectionsByPoint.TryGetValue(key, out var intersections))
+        {
+            foreach (var intersection in intersections)
+            {
+                if (intersection.Segment == segment && intersection.IsStart == isStart)
+                {
+                    Vector3 direction;
+                    if (isStart)
+                    {
+                        Vector3 endPos = intersection.IsStart ? 
+                            segment.vertices[3] : 
+                            segment.vertices[2];  
+                        direction = (endPos - newPosition).normalized;
+                    }
+                    else
+                    {
+                        Vector3 startPos = intersection.IsStart ? 
+                            segment.vertices[0] : 
+                            segment.vertices[1];  
+                        direction = (newPosition - startPos).normalized;
+                    }
+                    Vector3 perpendicular = Vector3.Cross(Vector3.up, direction).normalized;
+
+                    intersection.Point = newPosition;
+                    intersection.Direction = direction;
+                    intersection.Perpendicular = perpendicular;
+                }
+            }
+        }
+    }
+    
+    private void MoveIntersectionData(WallSegment segment, bool isStart, 
+                                     Vector2Int oldKey, Vector2Int newKey, Vector3 newPosition)
+    {
+        WallIntersectionData intersectionToMove = null;
+        
+        if (_intersectionsByPoint.TryGetValue(oldKey, out var oldIntersections))
+        {
+            foreach (var intersection in oldIntersections)
+            {
+                if (intersection.Segment == segment && intersection.IsStart == isStart)
+                {
+                    intersectionToMove = intersection;
+                    break;
+                }
+            }
+            
+            if (intersectionToMove != null)
+            {
+                oldIntersections.Remove(intersectionToMove);
+
+                if (oldIntersections.Count == 0)
+                {
+                    _intersectionsByPoint.Remove(oldKey);
+                }
+            }
+        }
+        
+        if (intersectionToMove != null)
+        {
+            Vector3 direction;
+            if (isStart)
+            {
+                Vector3 endPos = segment.vertices[3]; 
+                direction = (endPos - newPosition).normalized;
+            }
+            else
+            {
+                Vector3 startPos = segment.vertices[0]; 
+                direction = (newPosition - startPos).normalized;
+            }
+
+            Vector3 perpendicular = Vector3.Cross(Vector3.up, direction).normalized;
+            
+            intersectionToMove.Point = newPosition;
+            intersectionToMove.Direction = direction;
+            intersectionToMove.Perpendicular = perpendicular;
+            
+            if (!_intersectionsByPoint.ContainsKey(newKey))
+            {
+                _intersectionsByPoint[newKey] = new List<WallIntersectionData>();
+            }
+            
+            _intersectionsByPoint[newKey].Add(intersectionToMove);
+        }
+        _alreadyCorrectedPoints.Remove(oldKey);
+    }
+    
+    private void ResetCorrectedPoints()
+    {
+        _alreadyCorrectedPoints.Clear();
+    }
+            
+
+    #endregion
+
+    
+    #region Intersection 
     public void FixAllIntersections()
     {
         foreach (var kvp in _intersectionsByPoint)
@@ -277,6 +597,7 @@ public class WallPathManager
         });
     }
     
+    #endregion
     #region LineRenderer Fix
       public List<List<Vector2>> LineRendererToList(LineRenderer[] lineRenderers)
     {

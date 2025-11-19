@@ -4,24 +4,27 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private UIDrawGridLine _drawGridLine;
-
+    [SerializeField] private UIDrawEventBus _drawEventBus;
+ 
     [SerializeField] private GameObject _drawPanel;
     private MainPresenter _presenter;
-    
-    void Start()
+
+
+    private void Awake()
     {
-        
+        _drawEventBus.UpdatePathDelegate(OnUpdateWallPath);
+        _drawEventBus.CreatePathDelegate(OnCreateWallPath);
+        _drawEventBus.DisablePathDelegate(OnDisablePath);
     }
 
     private void OnEnable()
     {
-        _drawGridLine.OnCreateLinePath += WallCreatorEventChain;
+      //  _drawGridLine.OnCreateLinePath += WallCreatorEventChain;
     }
 
     private void OnDisable()
     {
-        _drawGridLine.OnCreateLinePath -= WallCreatorEventChain;
+      //  _drawGridLine.OnCreateLinePath -= WallCreatorEventChain;
     }
 
     public void SetPresenter(MainPresenter presenter)
@@ -33,15 +36,38 @@ public class UIManager : MonoBehaviour
     {
         _presenter.GenerateWallPath(path);
     }
-
-
+    
     public void ShowDrawPanel(bool isOn)
     {
         _drawPanel.SetActive(isOn);
     }
+    
+    #region Draw UI
 
-    public void SetPathData(List<List<Vector2>> paths, Vector3 medianPosition)
+    private void OnCreateWallPath(List<Vector2> path, int pathIndex)
     {
-        _drawGridLine.SetPathsData(paths, medianPosition);
+        _presenter?.CreateWallByLineEditor(path, pathIndex);  
     }
+        
+    private void OnUpdateWallPath(List<Vector2> path, int pathIndex)
+    {
+        _presenter?.UpdateWallPath(path, pathIndex);
+    }
+
+    private void OnDisablePath(List<Vector2> path, int pathIndex)
+    {
+        _presenter?.DisableWallPath(path, pathIndex);
+    }
+
+    public void ResetLineVertex()
+    {
+        _drawEventBus.ResetLineAndVertex();
+    }
+
+    public void SetPathData(List<List<Vector2>> pathData, Vector2 medianPosition)
+    {
+        _drawEventBus.SetPathData(pathData,medianPosition);
+    }
+
+    #endregion
 }

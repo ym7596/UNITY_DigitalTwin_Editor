@@ -219,5 +219,24 @@ public class WallGenerator : MonoBehaviour
         return unit;
     }
     #endregion
+    #region Wall Path Update 
+    public void UpdateWallPath(List<Vector2> updatedPath, int pathId)
+    {
+        _wallPathManager.UpdateWallVerticesByPath(updatedPath, pathId);
+    }
+
+    public void DisableWallPath(List<Vector2> disablePath, int pathId)
+    {
+        _wallPathManager.DisableWallPath(disablePath, pathId);
+    }
+
+    public void CreateWallPath(List<Vector2> path, int pathId)
+    {
+        if (path == null || path.Count < 2) return;
+
+        _wallPathManager.CreateWallByLineEditorPath(path,pathId);
+        _wallPathManager.FixAllIntersections();
+    }
+    #endregion
 }
 
