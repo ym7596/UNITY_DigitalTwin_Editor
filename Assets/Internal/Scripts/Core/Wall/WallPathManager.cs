@@ -22,7 +22,7 @@ public class WallPathManager
     private Dictionary<Vector2Int, List<WallSegment>> _wallSegmentsByPoint;
     private Dictionary<Vector2Int, List<WallIntersectionData>> _intersectionsByPoint;
     private Vector3 V2ToV3(Vector2 v) => new Vector3(v.x, 0f, v.y);
-    private Vector2Int ToGridKey(Vector2 v, float scale = 1000f) =>
+    private Vector2Int ToGridKey(Vector2 v, float scale = 10f) =>
         new Vector2Int(Mathf.RoundToInt(v.x * scale), Mathf.RoundToInt(v.y * scale));
     
     public List<List<Vector2>> AllPaths { get; private set; } = new List<List<Vector2>>();
@@ -305,10 +305,10 @@ public class WallPathManager
                     if (startIdx < oldPath.Count && endIdx < oldPath.Count && 
                         startIdx < updatedPath.Count && endIdx < updatedPath.Count)
                     {
-                        Vector2 oldStart = oldPath[startIdx] * 0.5f;
-                        Vector2 oldEnd = oldPath[endIdx] * 0.5f;
-                        Vector2 newStart = updatedPath[startIdx] * 0.5f;
-                        Vector2 newEnd = updatedPath[endIdx] * 0.5f;
+                        Vector2 oldStart = oldPath[startIdx] * _magnification;
+                        Vector2 oldEnd = oldPath[endIdx] *_magnification;
+                        Vector2 newStart = updatedPath[startIdx] * _magnification;
+                        Vector2 newEnd = updatedPath[endIdx] * _magnification;
                         
                         Vector3 startOffset = V2ToV3(newStart) - V2ToV3(oldStart);
                         Vector3 endOffset = V2ToV3(newEnd) - V2ToV3(oldEnd);
