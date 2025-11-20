@@ -49,10 +49,31 @@ public class WallPathManager
     
     public void CreateWallByDwgFile(List<List<Vector2>> paths)
     {
-        foreach (var path in paths)
+        /*foreach (var path in paths)
         {
-            CreateWallByLineEditor(path);
+           // CreateWallByLineEditor(path);
+        }*/
+        InitializePathTracking(paths);
+
+        for (int i = 0; i < paths.Count; i++)
+        {
+            CreateWallByPathWithId(paths[i], i);
         }
+    }
+    
+    private void InitializePathTracking(List<List<Vector2>> paths)
+    {
+        AllPaths = new List<List<Vector2>>(paths);
+    
+        // 각 경로에 ID 할당 및 매핑 초기화
+        for (int i = 0; i < AllPaths.Count; i++)
+        {
+            if (WallSegmentsByPath.ContainsKey(i) == false)
+            {
+                WallSegmentsByPath[i] = new List<WallSegment>();
+            }
+        }
+        OnPathChanged?.Invoke(AllPaths.Count - 1);
     }
     
     private WallSegment CreateWallMeshBasic(Vector3 start, Vector3 end, Vector3 perpendicular, float halfThickness)
@@ -137,7 +158,7 @@ public class WallPathManager
         {
             AllPaths.Add(null);
         }
-        
+        Debug.Log($"[WallPathManager] RegisterPathWithId : {pathId}");
         AllPaths[pathId] = path;
         
         if (WallSegmentsByPath.ContainsKey(pathId) == false)
@@ -267,12 +288,15 @@ public class WallPathManager
 
     public void UpdateWallVerticesByPath(List<Vector2> updatedPath, int pathId)
     {
+        Debug.Log($"updatePath : {updatedPath} pathId : {pathId}");
         if (pathId >= 0 && pathId < AllPaths.Count)
         {
             List<Vector2> oldPath = new List<Vector2>(AllPaths[pathId]);
             AllPaths[pathId] = updatedPath;
+            Debug.Log("UpdateWallVerticesByPath2");
             if (WallSegmentsByPath.TryGetValue(pathId, out List<WallSegment> wallSegments) && wallSegments != null)
             {
+                Debug.Log("UpdateWallVerticesByPath3");
                 for (int i = 0; i < wallSegments.Count; i++)
                 {
                     int startIdx = i;

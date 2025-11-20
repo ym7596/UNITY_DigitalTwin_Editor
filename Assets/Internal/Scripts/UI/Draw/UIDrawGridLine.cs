@@ -78,6 +78,7 @@ public class UIDrawGridLine : Graphic
     
     public void SetDrawActionType(DrawActionType drawActionType)
     {
+        Debug.Log($"SetDrawActionType: {drawActionType}");
         _drawActionType = drawActionType;
 
         foreach (DrawVertex vertex in _wallGraph.GetAllVertices())
@@ -419,7 +420,7 @@ public class UIDrawGridLine : Graphic
                             List<Vector2> uiPoints = path.GetPathPoints();
                             bool addMedian = _pathsRequireMedianOnExport.Contains(path.Id);
                             List<Vector2> modelPoints = ConvertUiToModel(uiPoints, addMedian);
-
+                            Debug.Log($"[UIDrawGridLine] UpdateLinePath: {path.Id}, {modelPoints.Count}");
                             OnUpdateLinePath?.Invoke(modelPoints, path.Id);
                         }
                     }

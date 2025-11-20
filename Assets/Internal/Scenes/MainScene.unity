@@ -2500,7 +2500,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83311525726029042ab2f83945efaa51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  _drawGridLine: {fileID: 1126640145}
+  _drawEventBus: {fileID: 1464096745}
   _drawPanel: {fileID: 1464096741}
 --- !u!1 &1426826336
 GameObject:
@@ -2776,6 +2776,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41a74a8071f51da478ad7f811cdcf8ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIDrawEventBus
+  _drawGridLine: {fileID: 1126640145}
+  _drawRemoteController: {fileID: 3713014678724314926}
+  _drawPanel: {fileID: 1443425874}
 --- !u!1 &1540919954
 GameObject:
   m_ObjectHideFlags: 0
@@ -3806,7 +3809,19 @@ MonoBehaviour:
   m_Group: {fileID: 2209115224082792945}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4045878818431188648}
+        m_TargetAssemblyTypeName: UIToggleEvent, Assembly-CSharp
+        m_MethodName: OnToggle_InvokeAction
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &4474904666553858087
 GameObject:
@@ -3903,7 +3918,19 @@ MonoBehaviour:
   m_Group: {fileID: 2209115224082792945}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4625332209046719090}
+        m_TargetAssemblyTypeName: UIToggleEvent, Assembly-CSharp
+        m_MethodName: OnToggle_InvokeAction
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!114 &4743496762743806415
 MonoBehaviour:
@@ -4532,7 +4559,19 @@ MonoBehaviour:
   m_Group: {fileID: 2209115224082792945}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8919978163033958579}
+        m_TargetAssemblyTypeName: UIToggleEvent, Assembly-CSharp
+        m_MethodName: OnToggle_InvokeAction
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
