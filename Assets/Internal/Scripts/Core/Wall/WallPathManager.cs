@@ -91,7 +91,47 @@ public class WallPathManager
         Vector3 p6 = p2 + up;
         Vector3 p7 = p3 + up;
 
-        Mesh mesh = new Mesh();
+        var verts = new Vector3[] { p0, p1, p2, p3, p4, p5, p6, p7 };
+
+        var uvs = new Vector2[]
+        {
+            new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1),
+            new Vector2(0,0), new Vector2(1,0), new Vector2(1,1), new Vector2(0,1),
+        };
+        
+        var uv2 = new Vector2[]
+        {
+            new Vector2(-1,-1), new Vector2(-1,-1), new Vector2(-1,-1), new Vector2(-1,-1), 
+            new Vector2(0,0),   new Vector2(1,0),   new Vector2(1,1),   new Vector2(0,1),  
+        };
+        
+        Color bottomCol = new Color(0.1f, 0.1f, 0.1f, 1f);
+        Color topCol    = Color.white;
+
+        var cols = new Color[]
+        {
+            bottomCol, bottomCol, bottomCol, bottomCol,
+            topCol,    topCol,    topCol,    topCol    
+        };
+        
+        int[] tris = new int[]
+        {
+            0,1,2, 2,3,0,     // bottom
+            4,6,5, 4,7,6,     // top
+            0,4,5, 5,1,0,     // front
+            3,2,6, 6,7,3,     // back
+            0,3,7, 7,4,0,     // left
+            1,5,6, 6,2,1      // right
+        };
+        var mesh = new Mesh { name = "WallSegmentMesh" };
+        mesh.SetVertices(verts);
+        mesh.SetUVs(0, new List<Vector2>(uvs));
+        mesh.SetUVs(1, new List<Vector2>(uv2)); // uv2 셋팅
+        mesh.SetColors(new List<Color>(cols));
+        mesh.SetTriangles(tris, 0);
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        /*Mesh mesh = new Mesh();
         mesh.vertices = new Vector3[] { p0, p1, p2, p3, p4, p5, p6, p7 };
         mesh.triangles = new int[]
         {
@@ -102,13 +142,13 @@ public class WallPathManager
             0,3,7, 7,4,0,     // left
             1,5,6, 6,2,1      // right
         };
-        mesh.RecalculateNormals();
+        mesh.RecalculateNormals();*/
 
         GameObject wall = new GameObject("WallSegment");
         wall.transform.SetParent(_transform);
         MeshFilter mf = wall.AddComponent<MeshFilter>();
-        mf.mesh = mesh;
-        wall.AddComponent<MeshRenderer>().material = _wallMaterial;
+        mf.sharedMesh = mesh;
+        wall.AddComponent<MeshRenderer>().sharedMaterial = _wallMaterial;
 
         return new WallSegment
         {

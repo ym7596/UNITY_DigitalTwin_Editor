@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WallDataSO
   wallHeight: 5
   wallThickness: 1
-  wallMaterial: {fileID: 2100000, guid: 40dad935cbc16fd4c84bda1c66d574ff, type: 2}
+  wallMaterial: {fileID: 2100000, guid: 2e116adb9ba922c4f8a21229cdd94233, type: 2}
   magnificationRate: 0.5
