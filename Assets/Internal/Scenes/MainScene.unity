@@ -567,11 +567,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WallGenerator
   _wallDataSO: {fileID: 11400000, guid: 0325df045d1495e4c90bd5fb0b5415ac, type: 2}
   _wallParent: {fileID: 266614312}
-  _lineMaterial: {fileID: 0}
-  _lineBaseWidth: 0.05
-  _lineLoop: 1
+  _lineMaterial: {fileID: 2100000, guid: 5c8a788b1ea9c0c4aaa0dbf7abb21eea, type: 2}
+  _lineBaseWidth: 0.1
+  _lineLoop: 0
   _dwgPluginSetting: {fileID: 11400000, guid: 775b819f0a309594aac149d3117d336c, type: 2}
-  autoLoad: 1
+  autoLoad: 0
   loadType: 0
   drawType: 0
   isBlockPrefab: 0
@@ -3206,7 +3206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveManager
   _jsonFileName: mapData.json
-  _loadLocationType: 0
+  _loadLocationType: 1
 --- !u!1 &1645079281
 GameObject:
   m_ObjectHideFlags: 0
