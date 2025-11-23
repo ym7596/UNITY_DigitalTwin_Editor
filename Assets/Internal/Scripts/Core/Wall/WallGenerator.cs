@@ -12,10 +12,15 @@ public class WallGenerator : MonoBehaviour
 {
     [SerializeField] private WallDataSO _wallDataSO;
     [SerializeField] private Transform _wallParent;
-
+    
+    [SerializeField] private Material _lineMaterial;
+    [SerializeField] private float _lineBaseWidth = 0.05f;
+    [SerializeField] private bool _lineLoop = true;
+    
     private UIManager _uiManager;
     private WallPathManager _wallPathManager;
-
+    
+    private LineRenderer[] _allLineRenderers;
     private Vector3 _medianPosition;
     
     #region Wall Creator Values
@@ -39,6 +44,8 @@ public class WallGenerator : MonoBehaviour
     public string url;
     
     #endregion
+
+    public List<List<Vector2>> GetPathData => _wallPathManager.AllPaths;
     
     private void Awake()
     {
@@ -67,6 +74,24 @@ public class WallGenerator : MonoBehaviour
     private void Clear()
     {
         
+    }
+
+    public void LoadWallBySaveData(List<List<Vector2>> pathData)
+    {
+        var convertToVector2List = VertexPointUtil.ConvertListVectorToVector2(pathData);
+        var geometricMedian = VertexPointUtil.GeometricMedian(convertToVector2List);
+     
+        _uiManager.SetPathData(pathData,geometricMedian);
+        _wallPathManager.CreateWallByDwgFile(pathData);
+        _wallPathManager.FixAllIntersections();
+        
+        _allLineRenderers = CreateLineRenderersFromPaths(pathData);
+        
+        _medianPosition = new Vector3(-geometricMedian.x*_wallDataSO.magnificationRate, 0f, -geometricMedian.y*_wallDataSO.magnificationRate);;
+        
+        SetLineRendererSizePosition(_allLineRenderers, _medianPosition, _wallDataSO.magnificationRate);
+        
+        _wallParent.position = _medianPosition;
     }
     
     private async UniTask<GameObject> MakeDwgAsync(string url, LoadType loadType, DrawType drawType)
@@ -189,6 +214,53 @@ public class WallGenerator : MonoBehaviour
         }
     }
     
+    private LineRenderer[] CreateLineRenderersFromPaths(List<List<Vector2>> paths)
+    {
+        var result = new List<LineRenderer>();
+        if (paths == null) return result.ToArray();
+
+        int idx = 0;
+        foreach (var path in paths)
+        {
+            if (path == null || path.Count < 2) continue;
+
+            var go = new GameObject($"SavedPath_{idx++}");
+            if(_dwgObject == null)
+                _dwgObject = new GameObject("dwgObject");
+            go.transform.SetParent(_dwgObject.transform, false);
+
+            var lr = go.AddComponent<LineRenderer>();
+            lr.useWorldSpace = true;
+            lr.loop = _lineLoop;
+            lr.alignment = LineAlignment.View;
+            lr.textureMode = LineTextureMode.Stretch;
+            lr.numCornerVertices = 2;
+            lr.numCapVertices = 2;
+
+            if (_lineMaterial != null)
+                lr.sharedMaterial = _lineMaterial;
+            
+            var isClosed = Vector2.Distance(path[0], path[path.Count - 1]) < 1e-4f;
+            var count = isClosed && _lineLoop == false ? path.Count + 1 : path.Count;
+
+            lr.positionCount = count;
+            for (int i = 0; i < path.Count; i++)
+            {
+                var p = path[i];
+                lr.SetPosition(i, new Vector3(p.x, 0f, p.y));
+            }
+            if ( _lineLoop == false && isClosed == true)
+            {
+                // loop를 쓰지 않는 경우 닫힌 경로는 첫 점을 한 번 더 추가
+                lr.SetPosition(count - 1, new Vector3(path[0].x, 0f, path[0].y));
+            }
+
+            lr.startWidth = lr.endWidth = _lineBaseWidth;
+            result.Add(lr);
+        }
+
+        return result.ToArray();
+    }
     private float GetUnit(CadDocument cadDocument)
     {
         var units = cadDocument.Header.InsUnits;

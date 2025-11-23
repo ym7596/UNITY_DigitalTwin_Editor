@@ -49,4 +49,18 @@ public class MainPresenter : IStartable, IInitializable
     {
         _wallGenerator.CreateWallPath(createPath, pathId);
     }
+
+    public void LoadMapData(SaveDataModel model)
+    {
+        _wallGenerator.LoadWallBySaveData(model.mapWallPathData);
+    }
+
+    public SaveDataModel GetSaveData()
+    {
+        var wallDatas = _wallGenerator.GetPathData;
+        SaveDataModel model = new();
+        model.id = "sample";
+        model.mapWallPathData = wallDatas;
+        return model;
+    }
 }

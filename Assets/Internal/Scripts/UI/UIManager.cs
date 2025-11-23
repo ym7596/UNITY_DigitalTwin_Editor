@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private UIDrawEventBus _drawEventBus;
- 
+    [SerializeField] private SaveManager _saveManager;
     [SerializeField] private GameObject _drawPanel;
     private MainPresenter _presenter;
 
@@ -17,15 +18,26 @@ public class UIManager : MonoBehaviour
         _drawEventBus.DisablePathDelegate(OnDisablePath);
     }
 
-    private void OnEnable()
+    #region SaveLoad Event
+
+    public void OnClick_Save()
     {
-      //  _drawGridLine.OnCreateLinePath += WallCreatorEventChain;
+        var data = _presenter.GetSaveData();
+        _saveManager.SaveToJson(data);
     }
 
-    private void OnDisable()
+    public void OnClick_Load()
     {
-      //  _drawGridLine.OnCreateLinePath -= WallCreatorEventChain;
+      _ = Load();   
     }
+
+    private async UniTask Load()
+    {
+        var loadData = await _saveManager.LoadMapDataAsync(LoadLocationType.StreamingAssets);
+        _presenter.LoadMapData(loadData);
+    }
+    
+    #endregion
 
     public void SetPresenter(MainPresenter presenter)
     {
