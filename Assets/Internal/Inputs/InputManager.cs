@@ -16,6 +16,7 @@ public class InputManager : MonoBehaviour
         if (isUI)
             return;
         bool hasHit = UIUtility.GetRayHit(PositionValue, out _hit);
+        Debug.Log(hasHit);
         if(hasHit)
             OnAction_RaycastHit?.Invoke(_hit);
     }

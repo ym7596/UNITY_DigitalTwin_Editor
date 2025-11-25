@@ -7,10 +7,12 @@ public class MainPresenter : IStartable, IInitializable
 {
     private WallGenerator _wallGenerator;
     private UIManager _uiManager;
+    private MapEditorManager _mapEditorManager;
 
-    public MainPresenter(UIManager uiManager)
+    public MainPresenter(UIManager uiManager, MapEditorManager mapEditorManager)
     {
         _uiManager = uiManager;
+        _mapEditorManager = mapEditorManager;
     }
     
     [Inject]
@@ -28,6 +30,7 @@ public class MainPresenter : IStartable, IInitializable
     {
         _uiManager?.SetPresenter(this);  
         _wallGenerator?.SetUIManager(_uiManager);
+        _mapEditorManager?.SetPresenter(this);
     }
 
     public void GenerateWallPath(List<Vector2> path)
