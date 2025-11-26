@@ -60,7 +60,31 @@ public class MapEditorManager : MonoBehaviour
 
     public void SetActionType(MapObjectRemoteActionType actionType)
     {
+        var mapObject = _objectHandler.CurrentSelected;
         _currentMapObjectRemoteActionType = actionType;
+        switch (actionType)
+        {
+            case MapObjectRemoteActionType.Move:
+            {
+                break;
+            }
+            case MapObjectRemoteActionType.Rotate:
+            {
+                mapObject.RotateObject(() =>
+                {
+                    //do something
+                });
+                break;
+            }
+            case MapObjectRemoteActionType.Delete:
+            {
+                mapObject.gameObject.SetActive(false);
+                _objectHandler.Deselect();
+                
+                break;
+            }
+            default: break;
+        }
     }
 
     private void OnLeftClick(RaycastHit hit)

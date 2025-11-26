@@ -38,19 +38,26 @@ public class MapObject : MonoBehaviour
     private async UniTask RotateObjectAsync(float duration)
     {
         float time = 0f;
-        float startValue =  transform.localRotation.eulerAngles.y;
+        Vector3 currentEuler = transform.localRotation.eulerAngles;
+        
+        float startValue = currentEuler.y;
         float targetValue = startValue + 45f;
+        
+        float fixedX = currentEuler.x;
+        float fixedZ = currentEuler.z;
+
         while (time < duration)
         {
             float t = time / duration;
             float value = Mathf.Lerp(startValue, startValue + 45, t);
-
-            transform.localRotation = Quaternion.Euler(0, value, 0);
             
+            transform.localRotation = Quaternion.Euler(fixedX, value, fixedZ);
+        
             time += Time.deltaTime;
             await UniTask.Yield(PlayerLoopTiming.PostLateUpdate);
         }
-        transform.localRotation = Quaternion.Euler(0, targetValue, 0);
+        
+        transform.localRotation = Quaternion.Euler(fixedX, targetValue, fixedZ);
         _isRotating = false;
     }
     
