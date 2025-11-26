@@ -58,6 +58,11 @@ public class MapEditorManager : MonoBehaviour
         }
     }
 
+    public void SetActionType(MapObjectRemoteActionType actionType)
+    {
+        _currentMapObjectRemoteActionType = actionType;
+    }
+
     private void OnLeftClick(RaycastHit hit)
     {
         var hitObject = hit.collider.gameObject;

@@ -9,6 +9,7 @@ public class UIDrawRemoteController : MonoBehaviour
     
     private event SetDrawActionTypeDelegate OnToggleDrawTypeChanged;
     private event DeletePointUIEventDelegate OnButtonDeletePoint;
+    
     private void Start()
     {
         foreach (var tgl in _toggles)

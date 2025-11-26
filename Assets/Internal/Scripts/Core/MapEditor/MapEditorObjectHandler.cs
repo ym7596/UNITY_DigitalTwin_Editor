@@ -35,6 +35,8 @@ public class MapEditorObjectHandler
         }
 
         _selectEffectObject.gameObject.SetActive(true);
+        
+        _presenter.ActiveRemoteController(true);
     }
 
     public void Deselect()
@@ -43,6 +45,8 @@ public class MapEditorObjectHandler
         
         _selectEffectObject.transform.SetParent(null);
         _selectEffectObject.gameObject.SetActive(false);
+        
+        _presenter.ActiveRemoteController(false);
     }
 
     public bool HasSelection() => _currentSelected != null;

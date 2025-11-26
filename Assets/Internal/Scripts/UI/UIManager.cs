@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIDrawEventBus _drawEventBus;
     [SerializeField] private SaveManager _saveManager;
     [SerializeField] private GameObject _drawPanel;
+    [SerializeField] private UIEditorRemoteController _editorRemoteController;
     private MainPresenter _presenter;
 
 
@@ -16,6 +17,8 @@ public class UIManager : MonoBehaviour
         _drawEventBus.UpdatePathDelegate(OnUpdateWallPath);
         _drawEventBus.CreatePathDelegate(OnCreateWallPath);
         _drawEventBus.DisablePathDelegate(OnDisablePath);
+        _editorRemoteController.Init(this);
+        SetOnRemoteController(false);
     }
 
     #region SaveLoad Event
@@ -53,6 +56,32 @@ public class UIManager : MonoBehaviour
     {
         _drawPanel.SetActive(isOn);
     }
+    
+
+    #region Edit Remote Controller
+
+    public void SetOnRemoteController(bool isOn)
+    {
+        _editorRemoteController.gameObject.SetActive(isOn);
+    }
+    
+    public void OnClick_ObjectActionType(MapObjectRemoteActionType type)
+    {
+        switch (type)
+        {
+            case MapObjectRemoteActionType.Info:
+            {
+                break;
+            }
+            default:
+            {
+                _presenter.SelectActionType(type);
+                break;
+            }
+        }
+    }
+
+    #endregion
     
     #region Draw UI
 

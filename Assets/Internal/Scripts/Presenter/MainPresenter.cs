@@ -33,6 +33,18 @@ public class MainPresenter : IStartable, IInitializable
         _mapEditorManager?.SetPresenter(this);
     }
 
+    public void ActiveRemoteController(bool isCancel)
+    {
+        _uiManager?.SetOnRemoteController(isCancel);
+    }
+
+    public void SelectActionType(MapObjectRemoteActionType actionType)
+    {
+        _mapEditorManager?.SetActionType(actionType);
+    }
+
+    #region Wall
+    
     public void GenerateWallPath(List<Vector2> path)
     {
         _wallGenerator?.GenerateWallPath(path);
@@ -57,7 +69,9 @@ public class MainPresenter : IStartable, IInitializable
     {
         _wallGenerator.LoadWallBySaveData(model.mapWallPathData);
     }
-
+    
+    #endregion
+    
     public SaveDataModel GetSaveData()
     {
         var wallDatas = _wallGenerator.GetPathData;
