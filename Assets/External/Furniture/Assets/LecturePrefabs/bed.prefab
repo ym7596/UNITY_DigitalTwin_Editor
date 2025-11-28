@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 1764158645683920225}
   - component: {fileID: 390782921383740234}
   - component: {fileID: 6450861234179676633}
-  - component: {fileID: 2387581097896277862}
-  m_Layer: 0
+  - component: {fileID: 5229490064858791116}
+  - component: {fileID: 5495154963584842115}
+  m_Layer: 6
   m_Name: bed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33,7 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: -90}
 --- !u!33 &390782921383740234
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -90,8 +91,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2387581097896277862
-MeshCollider:
+--- !u!65 &5229490064858791116
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -108,7 +109,18 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 6a43712dffaf88a489a7e4edcd60ff96, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 1.043637, y: 2.346377, z: 0.7528768}
+  m_Center: {x: 0, y: 0, z: 0.37645105}
+--- !u!114 &5495154963584842115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4172834478845151079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82b3d813b46083340ac8d1ecfc6d0db1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapObject

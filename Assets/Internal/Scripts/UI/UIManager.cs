@@ -56,6 +56,11 @@ public class UIManager : MonoBehaviour
     {
         _drawPanel.SetActive(isOn);
     }
+
+    public void OnClick_CreateObject(string name)
+    {
+        _presenter.CreateObject(name);
+    }
     
 
     #region Edit Remote Controller

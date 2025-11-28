@@ -8,11 +8,13 @@ public class MainPresenter : IStartable, IInitializable
     private WallGenerator _wallGenerator;
     private UIManager _uiManager;
     private MapEditorManager _mapEditorManager;
+    private MapObjectManager _mapObjectManager;
 
-    public MainPresenter(UIManager uiManager, MapEditorManager mapEditorManager)
+    public MainPresenter(UIManager uiManager, MapEditorManager mapEditorManager, MapObjectManager mapObjectManager)
     {
         _uiManager = uiManager;
         _mapEditorManager = mapEditorManager;
+        _mapObjectManager = mapObjectManager;
     }
     
     [Inject]
@@ -71,6 +73,11 @@ public class MainPresenter : IStartable, IInitializable
     }
     
     #endregion
+
+    public void CreateObject(string name)
+    {
+        _mapObjectManager?.Create(name);
+    }
     
     public SaveDataModel GetSaveData()
     {
