@@ -52,6 +52,22 @@ public class SaveManager : MonoBehaviour
 
         jData["mapWallPathData"] = wallPath;
         
+        JArray mapObjects = new JArray();
+        foreach (var obj in saveData.mapObjects)
+        {
+            JObject jo = new JObject
+            {
+                ["name"] = obj.name,
+                ["index"] = obj.index,
+                ["type"] = obj.type,
+                ["position"] = SetVector3FormatToJObject(obj.position),
+                ["rotation"] = SetVector3FormatToJObject(obj.rotation),
+                ["scale"] = SetVector3FormatToJObject(obj.scale)
+            };
+            mapObjects.Add(jo);
+        }
+        jData["mapObjects"] = mapObjects;
+        
         var jsonData = JsonConvert.SerializeObject(jData, Formatting.Indented);
         var filePath = $"{Application.persistentDataPath}/{_jsonFileName}";
         
@@ -135,6 +151,16 @@ public class SaveManager : MonoBehaviour
     }
     
 #endregion
+    
+    private JObject SetVector3FormatToJObject(Vector3Format val)
+    {
+        return new JObject
+        {
+            ["x"] = val.x,
+            ["y"] = val.y,
+            ["z"] = val.z
+        };
+    }
     
     private JObject SetVector2ToJObject(Vector2 val)
     {

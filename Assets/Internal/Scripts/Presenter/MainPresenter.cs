@@ -82,9 +82,11 @@ public class MainPresenter : IStartable, IInitializable
     public SaveDataModel GetSaveData()
     {
         var wallDatas = _wallGenerator.GetPathData;
+        var mapObjectsData = _mapObjectManager.GetAllObjectsData();
         SaveDataModel model = new();
         model.id = "sample";
         model.mapWallPathData = wallDatas;
+        model.mapObjects = mapObjectsData;
         return model;
     }
 }

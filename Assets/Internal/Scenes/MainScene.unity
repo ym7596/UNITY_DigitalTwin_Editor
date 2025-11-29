@@ -772,7 +772,7 @@ MonoBehaviour:
   _lineBaseWidth: 0.1
   _lineLoop: 0
   _dwgPluginSetting: {fileID: 11400000, guid: 775b819f0a309594aac149d3117d336c, type: 2}
-  autoLoad: 0
+  autoLoad: 1
   loadType: 0
   drawType: 0
   isBlockPrefab: 0
