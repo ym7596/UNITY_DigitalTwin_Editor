@@ -20,11 +20,33 @@ public class MapObjectManager : MonoBehaviour
         }
         return dataList;
     }
+
+    public void LoadData(List<MapObjectData> dataList)
+    {
+        foreach (var obj in dataList)
+        {
+            int type = obj.type;
+            
+            MapObject mo = CreateMapObject(obj.name);
+            mo.SetIndex(obj.index);
+            _nextIndex++;
+            mo.SetName(obj.name);
+            mo.gameObject.layer = LayerMask.NameToLayer(Config.InteractableItemLayerName);
+            mo.transform.localPosition = obj.GetVector3(obj.position);
+            mo.transform.localEulerAngles = obj.GetVector3(obj.rotation);
+            mo.transform.localScale = obj.GetVector3(obj.scale);
+            
+            _mapObjects[mo.Index] = mo;
+        }
+    }
     
     public void Create(string id)
     {
         var mo = CreateMapObject(id);
         mo.gameObject.layer = LayerMask.NameToLayer(Config.InteractableItemLayerName);
+       
+        mo.SetIndex(_nextIndex);
+        _nextIndex++;
         _mapObjects[mo.Index] = mo;
     }
 
@@ -43,8 +65,8 @@ public class MapObjectManager : MonoBehaviour
         var mo = go.GetComponent<MapObject>();
         if(mo ==null)
             mo = go.AddComponent<MapObject>();
-        mo.SetInit(obj.id,_nextIndex);
-        _nextIndex++;
+        mo.SetName(obj.id);
+        
         return mo;
     }
 }

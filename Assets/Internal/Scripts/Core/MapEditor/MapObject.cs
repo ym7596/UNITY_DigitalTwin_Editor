@@ -11,9 +11,13 @@ public class MapObject : MonoBehaviour
     public string Name { get; private set; }
     public int Index { get; private set; }
 
-    public void SetInit(string name, int index)
+    public void SetName(string name)
     {
         Name = name;
+    }
+
+    public void SetIndex(int index)
+    {
         Index = index;
     }
     

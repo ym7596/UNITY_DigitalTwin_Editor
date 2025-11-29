@@ -70,6 +70,7 @@ public class MainPresenter : IStartable, IInitializable
     public void LoadMapData(SaveDataModel model)
     {
         _wallGenerator.LoadWallBySaveData(model.mapWallPathData);
+        _mapObjectManager.LoadData(model.mapObjects);
     }
     
     #endregion
