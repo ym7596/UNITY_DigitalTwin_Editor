@@ -89,7 +89,7 @@ public class EndpointDrawer : PropertyDrawer
         switch (category)
         {
             case APICategory.Common:
-                t = FindEnumTypeByName("BaseEndPoint");
+                t = FindEnumTypeByName("CommonEndPoint");
                 break;
             case APICategory.Map:
                 t = FindEnumTypeByName("MapEndPoint");

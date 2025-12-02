@@ -15,6 +15,8 @@ public class MainSceneInstaller : LifetimeScope
         builder.RegisterComponent(_wallGenerator);
         builder.RegisterComponent(_mapEditorManager);
         builder.RegisterComponent(_mapObjectManager);
+        
+        builder.Register<RestFulAPI>(Lifetime.Scoped);
         builder.RegisterEntryPoint<MainPresenter>(Lifetime.Scoped);
     }
 }

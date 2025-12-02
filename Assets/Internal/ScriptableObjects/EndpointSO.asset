@@ -13,14 +13,24 @@ MonoBehaviour:
   m_Name: EndpointSO
   m_EditorClassIdentifier: Assembly-CSharp::EndpointSO
   <ServerMode>k__BackingField: 0
-  _domainEndPoints: []
+  _domainEndPoints:
+  - mode: 0
+    url: https://25c0e985-a781-43cf-8c08-b231121f2255.mock.pstmn.io
+  - mode: 1
+    url: https://25c0e985-a781-43cf-8c08-b231121f2255.mock.pstmn.io
   _devAuthToken: 
   _devRefreshToken: 
   _baseApiEndPoints:
   - apiCategory: 1
-    url: 
+    url: v1/common/load
     apiTypeValue: 0
+  - apiCategory: 1
+    url: v1/common/save
+    apiTypeValue: 1
   _mapApiEndPoints:
   - apiCategory: 2
-    url: 
+    url: v1/map/esl
     apiTypeValue: 0
+  - apiCategory: 2
+    url: v1/map/info
+    apiTypeValue: 1
