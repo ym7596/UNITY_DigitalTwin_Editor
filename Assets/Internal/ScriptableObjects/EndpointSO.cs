@@ -31,6 +31,18 @@ public class DomainEndPoint
     public string url;
 }
 
+public enum MapEndPoint
+{
+    ESL,
+    Info
+}
+
+public enum CommonEndPoint
+{
+    Load,
+    Save
+}
+
 [CreateAssetMenu(fileName = "EndpointSO", menuName = "MYSO/EndpointSO")]
 public class EndpointSO : ScriptableObject
 {

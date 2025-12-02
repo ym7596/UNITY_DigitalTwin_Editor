@@ -16,5 +16,11 @@ MonoBehaviour:
   _domainEndPoints: []
   _devAuthToken: 
   _devRefreshToken: 
-  _baseApiEndPoints: []
-  _mapApiEndPoints: []
+  _baseApiEndPoints:
+  - apiCategory: 1
+    url: 
+    apiTypeValue: 0
+  _mapApiEndPoints:
+  - apiCategory: 2
+    url: 
+    apiTypeValue: 0
