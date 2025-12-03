@@ -11,6 +11,9 @@ public class ProtocolManager : MonoBehaviour
     [SerializeField] private EndpointSO _endpointSO;
 
     private CancellationTokenSource _cts;
+    
+    public event Action<APICategory, Enum, object> OnRequest_API;
+    
     private void Start()
     {
         _cts?.Cancel();
@@ -29,8 +32,8 @@ public class ProtocolManager : MonoBehaviour
 
         if (result == UnityWebRequest.Result.Success)
         {
-            var json = packet.Deserialize();
-            Debug.Log(json);
+            var json = packet.DeserializeData<SaveDataModel>();
+            Debug.Log(json.id);
         }
     }
 }
