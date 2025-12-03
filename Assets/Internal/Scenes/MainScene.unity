@@ -440,12 +440,12 @@ MonoBehaviour:
   parentReference:
     TypeName: 
   autoRun: 1
-  autoInjectGameObjects:
-  - {fileID: 1975949157}
+  autoInjectGameObjects: []
   _wallGenerator: {fileID: 266614313}
   _uiManager: {fileID: 1409410783}
   _mapEditorManager: {fileID: 728945072}
   _mapObjectManager: {fileID: 1046953276}
+  _protocolManager: {fileID: 1975949159}
 --- !u!1 &153374748
 GameObject:
   m_ObjectHideFlags: 0
