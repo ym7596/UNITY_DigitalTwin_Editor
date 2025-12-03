@@ -5,14 +5,14 @@ using UnityEngine;
 using UnityEngine.Networking;
 using VContainer;
 
-public class ProtocolManager : MonoBehaviour
+public class ProtocolManager : MonoBehaviour, IProtocolManager
 {
     [Inject] private RestFulAPI _restFulAPI;
     [SerializeField] private EndpointSO _endpointSO;
 
     private CancellationTokenSource _cts;
     
-    public event Action<APICategory, Enum, object> OnRequest_API;
+    public event Action<APICategory, Enum, object> OnAction_APICall;
     
     private void Start()
     {
@@ -33,7 +33,10 @@ public class ProtocolManager : MonoBehaviour
         if (result == UnityWebRequest.Result.Success)
         {
             var json = packet.DeserializeData<SaveDataModel>();
+            OnAction_APICall?.Invoke(APICategory.Common, CommonEndPoint.Load, json);
             Debug.Log(json.id);
         }
     }
+
+    
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using VContainer;
@@ -9,12 +10,16 @@ public class MainPresenter : IStartable, IInitializable
     private UIManager _uiManager;
     private MapEditorManager _mapEditorManager;
     private MapObjectManager _mapObjectManager;
+    
+    private IDataPresenterHandler _dataPresenterHandler;
 
-    public MainPresenter(UIManager uiManager, MapEditorManager mapEditorManager, MapObjectManager mapObjectManager)
+    public MainPresenter(UIManager uiManager, MapEditorManager mapEditorManager,
+        MapObjectManager mapObjectManager, IDataPresenterHandler dataPresenterHandler)
     {
         _uiManager = uiManager;
         _mapEditorManager = mapEditorManager;
         _mapObjectManager = mapObjectManager;
+        _dataPresenterHandler = dataPresenterHandler;
     }
     
     [Inject]
@@ -25,7 +30,11 @@ public class MainPresenter : IStartable, IInitializable
     
     public void Start()
     {
-        
+        if (_dataPresenterHandler != null)
+        {
+            _dataPresenterHandler.OnAction_DataPresenterResponse -= OnAPIResponse;
+            _dataPresenterHandler.OnAction_DataPresenterResponse += OnAPIResponse;
+        }
     }
 
     public void Initialize()
@@ -89,5 +98,24 @@ public class MainPresenter : IStartable, IInitializable
         model.mapWallPathData = wallDatas;
         model.mapObjects = mapObjectsData;
         return model;
+    }
+
+    private void OnAPIResponse(APICategory category, Enum apiType, object payload)
+    {
+        switch (category)
+        {
+            case APICategory.Common:
+            {
+                var type = (CommonEndPoint) apiType;
+                Debug.Log($"API Response => {type} : {payload}");
+                var model = (SaveDataModel) payload;
+                LoadMapData(model);
+                break;
+            }
+            case APICategory.Map:
+            {
+                break;
+            }
+        }
     }
 }
