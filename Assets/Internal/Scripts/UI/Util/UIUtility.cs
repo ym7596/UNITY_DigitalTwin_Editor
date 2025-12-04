@@ -33,7 +33,6 @@ public static class UIUtility
             {
                 if (r.gameObject.layer == LayerMask.NameToLayer("UI"))
                 {
-                    Debug.Log($"Touch UI : {r.gameObject.name}");
                     return true;
                 }
             }

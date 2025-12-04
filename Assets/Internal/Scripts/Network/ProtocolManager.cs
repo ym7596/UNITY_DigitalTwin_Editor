@@ -34,7 +34,7 @@ public class ProtocolManager : MonoBehaviour, IProtocolManager
         {
             var json = packet.DeserializeData<SaveDataModel>();
             OnAction_APICall?.Invoke(APICategory.Common, CommonEndPoint.Load, json);
-            Debug.Log(json.id);
+           
         }
     }
 

@@ -198,7 +198,7 @@ public class WallPathManager
         {
             AllPaths.Add(null);
         }
-        Debug.Log($"[WallPathManager] RegisterPathWithId : {pathId}");
+      
         AllPaths[pathId] = path;
         
         if (WallSegmentsByPath.ContainsKey(pathId) == false)
