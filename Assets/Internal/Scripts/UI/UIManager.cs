@@ -8,7 +8,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private UIDrawEventBus _drawEventBus;
     [SerializeField] private SaveManager _saveManager;
     [SerializeField] private GameObject _drawPanel;
+    [SerializeField] private GameObject _historyPanel;
     [SerializeField] private UIEditorRemoteController _editorRemoteController;
+    
     private MainPresenter _presenter;
 
 
@@ -61,7 +63,16 @@ public class UIManager : MonoBehaviour
     {
         _presenter.CreateObject(name);
     }
+
+    public void OnClick_Undo()
+    {
+        _presenter.Undo();
+    }
     
+    public void OnClick_Redo()
+    {
+        _presenter.Redo();
+    }
 
     #region Edit Remote Controller
 

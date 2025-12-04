@@ -7,12 +7,15 @@ public class MapEditorObjectHandler
     private MainPresenter _presenter;
 
     private MapObject _currentSelected;
+    private MapObjectHistoryController _historyController;
     
     public MapObject CurrentSelected => _currentSelected;
 
-    public MapEditorObjectHandler(MainPresenter presenter, GameObject selectEffectObject)
+    public MapEditorObjectHandler(MainPresenter presenter,
+        GameObject selectEffectObject, MapObjectHistoryController historyController)
     {
         _presenter = presenter;
+        _historyController = historyController;
         _selectEffectObject = Object.Instantiate(selectEffectObject).GetComponent<MapObjectSelectEffect>();
         _selectEffectObject.gameObject.SetActive(false);
     }
@@ -24,6 +27,8 @@ public class MapEditorObjectHandler
         {
             return;
         }
+        
+        _historyController.SetActionItemGameObject(_currentSelected.gameObject);
         
         _selectEffectObject.transform.SetParent(_currentSelected.transform);
         _selectEffectObject.transform.localPosition = new Vector3(0, 0.05f, 0);
@@ -42,6 +47,7 @@ public class MapEditorObjectHandler
     public void Deselect()
     {
         _currentSelected = null;
+        _historyController.SetObjectCancel();
         
         _selectEffectObject.transform.SetParent(null);
         _selectEffectObject.gameObject.SetActive(false);

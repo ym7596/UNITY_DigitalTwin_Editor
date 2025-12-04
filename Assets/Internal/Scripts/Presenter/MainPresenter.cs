@@ -54,6 +54,17 @@ public class MainPresenter : IStartable, IInitializable
     {
         _mapEditorManager?.SetActionType(actionType);
     }
+    
+    public void Undo()
+    {
+        _historyController.Undo();
+    }
+
+    public void Redo()
+    {
+        _historyController.Redo();
+    }
+
 
     #region Wall
     
@@ -89,6 +100,8 @@ public class MainPresenter : IStartable, IInitializable
     {
         _mapObjectManager?.Create(name);
     }
+    
+    
     
     public SaveDataModel GetSaveData()
     {

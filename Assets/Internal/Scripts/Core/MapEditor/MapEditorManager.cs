@@ -18,8 +18,8 @@ public class MapEditorManager : MonoBehaviour
     public void SetPresenter(MainPresenter presenter, MapObjectHistoryController historyController)
     {
         _presenter = presenter;
-        _objectHandler = new MapEditorObjectHandler(presenter, _selectEffectPrefab);
         _historyController = historyController;
+        _objectHandler = new MapEditorObjectHandler(presenter, _selectEffectPrefab, _historyController);
     }
 
     private void Awake()
@@ -72,27 +72,35 @@ public class MapEditorManager : MonoBehaviour
             }
             case MapObjectRemoteActionType.Rotate:
             {
+                _historyController.SetBeforeTransformInfo();
                 mapObject.RotateObject(() =>
                 {
                     //do something
+                    _historyController.SaveTransformAfter();
                 });
                 break;
             }
             case MapObjectRemoteActionType.Delete:
             {
-                mapObject.gameObject.SetActive(false);
+                DeleteItem();
                 _objectHandler.Deselect();
-                
+                _currentMapObjectRemoteActionType = MapObjectRemoteActionType.None;
                 break;
             }
             default: break;
         }
     }
 
+    private void DeleteItem()
+    {
+        _historyController.ApplyVisibleGameObject(_objectHandler.CurrentSelected.gameObject,
+            true,false);
+    }
+
     private void OnLeftClick(RaycastHit hit)
     {
         var hitObject = hit.collider.gameObject;
-        Debug.Log(hitObject.name);
+        
         if (hitObject != null)
         {
             if (hitObject.layer == LayerMask.NameToLayer(Config.InteractableItemLayerName))

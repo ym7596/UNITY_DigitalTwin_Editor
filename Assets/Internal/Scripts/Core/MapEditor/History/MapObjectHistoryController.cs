@@ -40,6 +40,8 @@ public class MapObjectHistoryController
          return;
       var history = new TransformHistory(_target, _beforeTransform, afterTransformInfo);
       _historyController.ExecuteHistory(history);
+      
+      _beforeTransform = afterTransformInfo;
    }
    
    public void ApplyVisibleGameObject(GameObject go,bool before,bool after)
