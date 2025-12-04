@@ -10,16 +10,17 @@ public class MainPresenter : IStartable, IInitializable
     private UIManager _uiManager;
     private MapEditorManager _mapEditorManager;
     private MapObjectManager _mapObjectManager;
-    
+    private MapObjectHistoryController _historyController;
     private IDataPresenterHandler _dataPresenterHandler;
 
     public MainPresenter(UIManager uiManager, MapEditorManager mapEditorManager,
-        MapObjectManager mapObjectManager, IDataPresenterHandler dataPresenterHandler)
+        MapObjectManager mapObjectManager, IDataPresenterHandler dataPresenterHandler, MapObjectHistoryController historyController)
     {
         _uiManager = uiManager;
         _mapEditorManager = mapEditorManager;
         _mapObjectManager = mapObjectManager;
         _dataPresenterHandler = dataPresenterHandler;
+        _historyController = historyController;
     }
     
     [Inject]
@@ -41,7 +42,7 @@ public class MainPresenter : IStartable, IInitializable
     {
         _uiManager?.SetPresenter(this);  
         _wallGenerator?.SetUIManager(_uiManager);
-        _mapEditorManager?.SetPresenter(this);
+        _mapEditorManager?.SetPresenter(this, _historyController);
     }
 
     public void ActiveRemoteController(bool isCancel)

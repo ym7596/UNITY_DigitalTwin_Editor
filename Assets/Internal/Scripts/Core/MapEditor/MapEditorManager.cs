@@ -7,6 +7,7 @@ public class MapEditorManager : MonoBehaviour
     [SerializeField] private GameObject _selectEffectPrefab;
     private MainPresenter _presenter;
     private MapEditorObjectHandler _objectHandler;
+    private MapObjectHistoryController _historyController;
 
     private Vector3 _moveValue;
     private Camera _mainCamera;
@@ -14,10 +15,11 @@ public class MapEditorManager : MonoBehaviour
     
     private MapObjectRemoteActionType _currentMapObjectRemoteActionType = MapObjectRemoteActionType.None;
     
-    public void SetPresenter(MainPresenter presenter)
+    public void SetPresenter(MainPresenter presenter, MapObjectHistoryController historyController)
     {
         _presenter = presenter;
         _objectHandler = new MapEditorObjectHandler(presenter, _selectEffectPrefab);
+        _historyController = historyController;
     }
 
     private void Awake()

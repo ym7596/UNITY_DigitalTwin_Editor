@@ -23,5 +23,7 @@ public class MainSceneInstaller : LifetimeScope
         
         builder.RegisterEntryPoint<DataPresenter>(Lifetime.Scoped).As<IDataPresenterHandler>();
         builder.RegisterEntryPoint<MainPresenter>(Lifetime.Scoped);
+        
+        builder.Register<MapObjectHistoryController>(Lifetime.Scoped);
     }
 }
