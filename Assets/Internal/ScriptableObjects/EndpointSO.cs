@@ -34,6 +34,7 @@ public class DomainEndPoint
 public enum MapEndPoint
 {
     ESL,
+    Heatmap,
     Info
 }
 

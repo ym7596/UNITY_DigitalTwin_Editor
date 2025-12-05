@@ -20,6 +20,7 @@ public class ProtocolManager : MonoBehaviour, IProtocolManager
         _cts = new CancellationTokenSource();
         
         _ = GetLoadData(_cts.Token);
+        _ = GetHeatmapData(_cts.Token);
     }
 
     private async UniTask GetLoadData(CancellationToken token)
@@ -35,6 +36,22 @@ public class ProtocolManager : MonoBehaviour, IProtocolManager
             var json = packet.DeserializeData<SaveDataModel>();
             OnAction_APICall?.Invoke(APICategory.Common, CommonEndPoint.Load, json);
            
+        }
+    }
+
+    private async UniTask GetHeatmapData(CancellationToken token)
+    {
+        var packet = new WebPacket(_endpointSO.GetUrl(APICategory.Map, (int)MapEndPoint.Heatmap));
+        var result = await packet.ExecuteRequestAsync(token);
+
+        if (result == UnityWebRequest.Result.Success)
+        {
+            var json = packet.DeserializeData<HeatMapDataList>();
+            foreach (var j in json.heatMaps)
+            {
+                Debug.Log(j.id);
+            }
+            OnAction_APICall?.Invoke(APICategory.Map, MapEndPoint.Heatmap, json);
         }
     }
 

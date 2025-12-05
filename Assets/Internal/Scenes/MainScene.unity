@@ -297,6 +297,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 42566222}
   m_CullTransparentMesh: 1
+--- !u!1 &66751555
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 66751556}
+  m_Layer: 0
+  m_Name: HeatmapWeights
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &66751556
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66751555}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 793613975}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &95298510
 GameObject:
   m_ObjectHideFlags: 0
@@ -624,6 +655,7 @@ MonoBehaviour:
   _mapEditorManager: {fileID: 728945072}
   _mapObjectManager: {fileID: 1046953276}
   _protocolManager: {fileID: 1975949159}
+  _heatmapController: {fileID: 1467526186}
 --- !u!1 &153374748
 GameObject:
   m_ObjectHideFlags: 0
@@ -2473,6 +2505,7 @@ Transform:
   m_Children:
   - {fileID: 290124051}
   - {fileID: 2057131742}
+  - {fileID: 66751556}
   m_Father: {fileID: 1035368438}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &817149718
@@ -4322,9 +4355,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HeatmapController
   _targetHeatMapRenderer: {fileID: 2057131745}
-  _targetContainer: {fileID: 2057131742}
+  _targetContainer: {fileID: 66751556}
   _heatmapWardPrefab: {fileID: 4702861619093128491, guid: fa5e741e67decae439f8ecbf4604b76a, type: 3}
-  _radius: 5
+  _radius: 10
   _sigmaFraction: 0.35
   _maxIntensity: 1
   _autoUpdateMaxIntensity: 1

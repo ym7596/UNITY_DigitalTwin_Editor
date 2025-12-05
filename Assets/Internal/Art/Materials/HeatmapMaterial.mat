@@ -121,8 +121,8 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
-    - _Radius: 5
-    - _RadiusWeightK: 0.25
+    - _Radius: 36.21
+    - _RadiusWeightK: 0.59
     - _Range0: 0
     - _Range1: 0.25
     - _Range2: 0.5

@@ -32,5 +32,5 @@ MonoBehaviour:
     url: v1/map/esl
     apiTypeValue: 0
   - apiCategory: 2
-    url: v1/map/info
+    url: v1/map/heatmap
     apiTypeValue: 1

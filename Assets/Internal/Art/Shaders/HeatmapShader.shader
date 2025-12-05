@@ -163,8 +163,9 @@ Shader "Custom/HeatmapShader"
 
                     // Weight에 따라 반경 확장
                     float effR  = R * (1.0 + _RadiusWeightK * sqrt(max(0.0, weight)));
-                    //float distN = dist / effR;
-                    float distN = dist / R;
+                    float distN = dist / effR; //원 크기 상대적
+                  //  float distN = dist / R; //원 고정
+                    //disN 을 뭘 쓰냐에 따라서 원의 크기 고정 or weight에 따라 상대적 크기 조정
                     if (distN < 1.0)
                     {
                         /*float sigmaSq = sigma * sigma;

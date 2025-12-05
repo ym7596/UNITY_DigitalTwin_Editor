@@ -11,6 +11,7 @@ public class MainPresenter : IStartable, IInitializable
     private MapEditorManager _mapEditorManager;
     private MapObjectManager _mapObjectManager;
     private MapObjectHistoryController _historyController;
+    private HeatmapController _heatmapController;
     private IDataPresenterHandler _dataPresenterHandler;
 
     public MainPresenter(UIManager uiManager, MapEditorManager mapEditorManager,
@@ -27,6 +28,12 @@ public class MainPresenter : IStartable, IInitializable
     public void InitWallCreator(WallGenerator wallGenerator)
     {
         _wallGenerator = wallGenerator;
+    }
+    
+    [Inject]
+    public void InitHeatmapController(HeatmapController heatmapController)
+    {
+        _heatmapController = heatmapController;
     }
     
     public void Start()
@@ -128,6 +135,16 @@ public class MainPresenter : IStartable, IInitializable
             }
             case APICategory.Map:
             {
+                var type = (MapEndPoint) apiType;
+                switch (type)
+                {
+                    case MapEndPoint.Heatmap:
+                    {
+                        var json = (HeatMapDataList) payload;
+                        _heatmapController.GenerateHeatmap(json);
+                        break;
+                    }
+                }
                 break;
             }
         }
