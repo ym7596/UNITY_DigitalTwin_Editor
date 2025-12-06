@@ -14,13 +14,18 @@ public class ProtocolManager : MonoBehaviour, IProtocolManager
     
     public event Action<APICategory, Enum, object> OnAction_APICall;
     
+    public async UniTask RequestSnapshotAsync(CancellationToken token)
+    {
+        await UniTask.Delay(TimeSpan.FromSeconds(3), cancellationToken: token);
+        await GetHeatmapData(token);
+    }
+
     private void Start()
     {
         _cts?.Cancel();
         _cts = new CancellationTokenSource();
         
         _ = GetLoadData(_cts.Token);
-        _ = GetHeatmapData(_cts.Token);
     }
 
     private async UniTask GetLoadData(CancellationToken token)

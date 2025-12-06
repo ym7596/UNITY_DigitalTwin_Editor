@@ -4357,9 +4357,9 @@ MonoBehaviour:
   _targetHeatMapRenderer: {fileID: 2057131745}
   _targetContainer: {fileID: 66751556}
   _heatmapWardPrefab: {fileID: 4702861619093128491, guid: fa5e741e67decae439f8ecbf4604b76a, type: 3}
-  _radius: 10
-  _sigmaFraction: 0.35
-  _maxIntensity: 1
+  _radius: 27
+  _sigmaFraction: 0.15
+  _maxIntensity: 9
   _autoUpdateMaxIntensity: 1
   _radiusWeightK: 0.25
   _includeDescendants: 1
