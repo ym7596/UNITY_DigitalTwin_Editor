@@ -22,6 +22,11 @@ public class UIManager : MonoBehaviour
       //  _drawGridLine.OnCreateLinePath += WallCreatorEventChain;
     }
 
+    public void SetGraphData(WallGraphData wallGraphData)
+    {
+        _drawEventBus.SetGraphData(wallGraphData);
+    }
+
     private void OnDisable()
     {
       //  _drawGridLine.OnCreateLinePath -= WallCreatorEventChain;

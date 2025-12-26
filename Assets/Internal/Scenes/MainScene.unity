@@ -1976,7 +1976,7 @@ MonoBehaviour:
   _uiCamera: {fileID: 1386768526}
   _pointPrefab: {fileID: 7320968957846158127, guid: f08bf687cf868db4c85fe688d8d495d5, type: 3}
   _drawZone: {fileID: 1443425874}
-  _pointSize: 10
+  _pointSize: 20
   _lineThickness: 10
   _pointColor: {r: 1, g: 0, b: 0, a: 1}
   _lineColor: {r: 0, g: 1, b: 0, a: 1}
@@ -4250,7 +4250,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 3713014678724314926}
         m_TargetAssemblyTypeName: UIDrawRemoteController, Assembly-CSharp
         m_MethodName: OnButton_DeletePoint
         m_Mode: 1

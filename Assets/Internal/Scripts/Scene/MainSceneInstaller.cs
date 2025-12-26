@@ -13,5 +13,6 @@ public class MainSceneInstaller : LifetimeScope
         builder.RegisterComponent(_wallGenerator);
         
         builder.RegisterEntryPoint<MainPresenter>(Lifetime.Scoped);
+        builder.Register<WallGraphData>(Lifetime.Scoped);
     }
 }

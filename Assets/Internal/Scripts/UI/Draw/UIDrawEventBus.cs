@@ -12,6 +12,11 @@ public class UIDrawEventBus : MonoBehaviour
         _drawRemoteController?.SetDrawActionDelegate(SetDrawActionType, DeletePointAction);
     }
 
+    public void SetGraphData(WallGraphData wallGraphData)
+    {
+        _drawGridLine.SetGraphData(wallGraphData);
+    }
+
     public void ResetLineAndVertex()
     {
         _drawGridLine.ClearAll();

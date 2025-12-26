@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using UnityEngine;
 
 public class WallGraphData
@@ -12,11 +13,18 @@ public class WallGraphData
     private int _nextEdgeId = 0;
     private int _nextEdgePathId = 0;
 
+    public event System.Action<DrawVertex> OnVertexCreated;
+    public event System.Action<DrawEdge> OnEdgeCreated;
+    public event System.Action<DrawEdgePath> OnEdgePathCreated;
+    public event Action<int> OnDisableEdge; 
+
     public DrawVertex CreateVertex(Vector2 position)
     {
         int id = _nextVertexId++;
         DrawVertex vertex = new DrawVertex(id, position);
         _vertices[id] = vertex;
+
+        OnVertexCreated?.Invoke(vertex);
         return vertex;
     }
     
@@ -25,6 +33,7 @@ public class WallGraphData
         int id = _nextEdgeId++;
         DrawEdge edge = new DrawEdge(id, start, end);
         _edges[id] = edge;
+        OnEdgeCreated?.Invoke(edge);
         return edge;
     }
 
@@ -33,6 +42,7 @@ public class WallGraphData
         int id = _nextEdgePathId++;
         DrawEdgePath edgePath = new DrawEdgePath(id);
         _edgePaths[id] = edgePath;
+        OnEdgePathCreated?.Invoke(edgePath);
         return edgePath;
     }
 
@@ -92,6 +102,28 @@ public class WallGraphData
                 path.RemoveEdge(edge);
             }
             _edges.Remove(id);
+        }
+    }
+
+    public void DisableVertex(int vertexId)
+    {
+        if (!_vertices.TryGetValue(vertexId, out var vertex))
+            return;
+
+        vertex.IsActive = false;
+
+        foreach (var edge in vertex.ConnectedEdges)
+        {
+            DisableEdge(edge.Id);
+        }
+    }
+
+    public void DisableEdge(int edgeId)
+    {
+        if (_edges.TryGetValue(edgeId, out var edge))
+        {
+            edge.IsActive = false;
+            OnDisableEdge?.Invoke(edgeId); // ⭐ Wall에 알림
         }
     }
 

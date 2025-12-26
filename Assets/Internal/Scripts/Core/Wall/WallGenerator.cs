@@ -42,10 +42,21 @@ public class WallGenerator : MonoBehaviour
     
     private void Awake()
     {
-        _wallPathManager = new WallPathManager(_wallDataSO.wallMaterial, _wallParent, _wallDataSO.wallHeight, _wallDataSO.wallThickness, _wallDataSO.magnificationRate);
+  
+    }
+
+    private void Start()
+    {
         if (autoLoad == false) return;
         var fileNameOrUrl = loadType == LoadType.StreamingAssets ? fileName : url;
         _ = MakeDwgAsync(fileNameOrUrl, loadType, drawType);
+    }
+
+    public void SetGraphData(WallGraphData wallGraphData)
+    {
+        Debug.Log("WallGenerator SetGraphData");
+        _wallPathManager = new WallPathManager(_wallDataSO.wallMaterial, _wallParent, _wallDataSO.wallHeight, _wallDataSO.wallThickness, _wallDataSO.magnificationRate);
+        _wallPathManager.SetGraphData(wallGraphData);
     }
 
     public void SetUIManager(UIManager uiManager)
@@ -57,9 +68,9 @@ public class WallGenerator : MonoBehaviour
     {
         if (path == null || path.Count < 2) return;
         
-        _wallPathManager.CreateWallByLineEditor(path);
+    //    _wallPathManager.CreateWallByLineEditor(path);
 
-        _wallPathManager.FixAllIntersections();
+    //    _wallPathManager.FixAllIntersections();
     }
     
     #region DWG Loader
@@ -234,8 +245,8 @@ public class WallGenerator : MonoBehaviour
     {
         if (path == null || path.Count < 2) return;
 
-        _wallPathManager.CreateWallByLineEditorPath(path,pathId);
-        _wallPathManager.FixAllIntersections();
+        //_wallPathManager.CreateWallByLineEditorPath(path,pathId);
+       // _wallPathManager.FixAllIntersections();
     }
     #endregion
 }

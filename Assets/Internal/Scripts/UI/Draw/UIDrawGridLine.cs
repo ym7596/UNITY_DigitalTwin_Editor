@@ -24,7 +24,7 @@ public class UIDrawGridLine : Graphic
     [SerializeField] private Color _lineColor = Color.green;
     [SerializeField] private Color _previewColor = new Color(0, 1, 1, 0.5f);
 
-    private WallGraphData _wallGraph = new WallGraphData();
+    private WallGraphData _wallGraph;
     private DrawEdgePath _prevEdgePath;
     private bool _shouldShowPreviewText = false;
     private UIDrawPoint _prevVertexPoint = null; // 현재 선택된 정점
@@ -57,6 +57,11 @@ public class UIDrawGridLine : Graphic
     {
         base.Awake();
         _drawActionType = DrawActionType.PointCreate;
+    }
+
+    public void SetGraphData(WallGraphData wallGraph)
+    {
+        _wallGraph = wallGraph;
     }
     
     void Update()
@@ -101,6 +106,7 @@ public class UIDrawGridLine : Graphic
     protected override void OnPopulateMesh(VertexHelper vh)
     {
         vh.Clear();
+        if(_wallGraph == null) return;
         
         foreach (DrawEdge edge in _wallGraph.GetAllEdges())
         {
@@ -467,33 +473,22 @@ public void SetUpLineCreateEvent(RectTransform drawZone, CreateLinePathDele crea
 #endregion
     public void RemovePoint()
     {
-        if(_prevVertexPoint == null) 
+        if (_prevVertexPoint == null)
             return;
-            
-        DrawVertex linkedVertex = _prevVertexPoint.LinkedVertex;
-        var paths = linkedVertex.ConnectedEdges;
-            
-        if (linkedVertex == null)
-            return;
-            
-        SetVertexActive(linkedVertex, false);
-            
-        // 연결된 경로(Path) 갱신 및 이벤트 호출
-        HashSet<DrawEdgePath> updatedPaths = new HashSet<DrawEdgePath>();
-        foreach (DrawEdge edge in linkedVertex.ConnectedEdges)
-        {
-            foreach (DrawEdgePath path in _wallGraph.GetAllEdgePaths())
-            {
-                if (path.Edges.Contains(edge) && updatedPaths.Add(path))
-                {
-                    // 해당 Path의 좌표 리스트를 구함
-                    List<Vector2> pathPoints = path.GetPathPoints();
 
-                    // 이벤트를 통해 Path ID와 좌표 정보를 전달
-                    OnDisableWallPath?.Invoke(pathPoints, path.Id);
-                }
-            }
-        }
+        DrawVertex vertex = _prevVertexPoint.LinkedVertex;
+        if (vertex == null)
+            return;
+
+        // UI는 Graph에만 요청
+        _wallGraph.DisableVertex(vertex.Id);
+
+        // UI 요소 비활성화
+        if (vertex.VisualPoint != null)
+            vertex.VisualPoint.gameObject.SetActive(false);
+
+        _prevVertexPoint = null;
+        SetVerticesDirty();
     }
     
     private void ClearAllPaths()

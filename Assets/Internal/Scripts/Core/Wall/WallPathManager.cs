@@ -13,6 +13,7 @@ public class WallPathManager
     private float _wallThickness;
     private float _magnification;
     
+    private WallGraphData _wallGraphData;
     private CancellationTokenSource _cts;
     
     private Vector3 _medianPosition = Vector3.zero;
@@ -21,18 +22,21 @@ public class WallPathManager
     private HashSet<Vector2Int> _alreadyCorrectedPoints;
     private Dictionary<Vector2Int, List<WallSegment>> _wallSegmentsByPoint;
     private Dictionary<Vector2Int, List<WallIntersectionData>> _intersectionsByPoint;
-    private Vector3 V2ToV3(Vector2 v) => new Vector3(v.x, 0f, v.y);
+    private 
+        Vector3 V2ToV3(Vector2 v) => new Vector3(v.x, 0f, v.y);
     private Vector2Int ToGridKey(Vector2 v, float scale = 10f) =>
         new Vector2Int(Mathf.RoundToInt(v.x * scale), Mathf.RoundToInt(v.y * scale));
     
     public List<List<Vector2>> AllPaths { get; private set; } = new List<List<Vector2>>();
     public Dictionary<int, List<WallSegment>> WallSegmentsByPath { get; private set; } = new Dictionary<int, List<WallSegment>>();
+  private Dictionary<int, WallSegment> _edgeIdToWall = new();
+private Dictionary<int, List<WallSegment>> _vertexIdToWalls = new();
+
     public event Action<int> OnPathChanged;
     
     public WallPathManager(Material wallMaterial, Transform transform, float wallHeight,float wallThickness, float magnification)
     {
         _wallMaterial = wallMaterial;
-        _transform = transform;
         _wallHeight = wallHeight;
         _wallThickness = wallThickness;
         _magnification = magnification;
@@ -40,6 +44,60 @@ public class WallPathManager
         _intersectionsByPoint = new Dictionary<Vector2Int, List<WallIntersectionData>>();
         _generatedLines = new HashSet<LineKey>();
         _alreadyCorrectedPoints = new HashSet<Vector2Int>();
+    }
+
+    public void SetGraphData(WallGraphData wallGraphData)
+    {
+        _wallGraphData = wallGraphData;
+
+        _wallGraphData.OnEdgeCreated += CreateWallFromEdge;
+        _wallGraphData.OnDisableEdge += DisableWallByEdgeId;
+        // Implementation can be added if needed to utilize wallGraphData
+    }
+
+
+    private void CreateWallFromEdge(DrawEdge edge)
+    {
+        Vector2 a = edge.Start.Position * _magnification;
+        Vector2 b = edge.End.Position   * _magnification;
+
+        Vector3 start = V2ToV3(a);
+        Vector3 end   = V2ToV3(b);
+
+        Vector3 direction = (end - start).normalized;
+        Vector3 perpendicular = Vector3.Cross(Vector3.up, direction).normalized;
+        float halfThickness = _wallThickness / 2f;
+
+        WallSegment segment = CreateWallMeshBasic(start, end, perpendicular, halfThickness);
+
+        // ⭐ 핵심 추가
+        _edgeIdToWall[edge.Id] = segment;
+        RegisterVertexSegment(edge.Start.Id, segment);
+        RegisterVertexSegment(edge.End.Id, segment);
+
+        // 6. (선택) 활성 상태 동기화
+        segment.go.SetActive(edge.IsActive);
+    }
+
+    public void DisableWallByEdgeId(int edgeId)
+    {
+        if (_edgeIdToWall.TryGetValue(edgeId, out var segment))
+        {
+            segment.go.SetActive(false);
+        }
+    }
+
+
+
+    private void RegisterVertexSegment(int vertexId, WallSegment segment)
+    {
+        if (!_vertexIdToWalls.TryGetValue(vertexId, out var list))
+        {
+            list = new List<WallSegment>();
+            _vertexIdToWalls[vertexId] = list;
+        }
+
+        list.Add(segment);
     }
 
     public void SetMedianPosition(Vector3 medianPosition)
@@ -168,6 +226,8 @@ public class WallPathManager
         
         OnPathChanged?.Invoke(pathId);
     }
+
+
     
     public void CreateWallByLineEditor(List<Vector2> path)
     {
@@ -288,15 +348,15 @@ public class WallPathManager
 
     public void UpdateWallVerticesByPath(List<Vector2> updatedPath, int pathId)
     {
-        Debug.Log($"updatePath : {updatedPath} pathId : {pathId}");
+       // Debug.Log($"updatePath : {updatedPath} pathId : {pathId}");
         if (pathId >= 0 && pathId < AllPaths.Count)
         {
             List<Vector2> oldPath = new List<Vector2>(AllPaths[pathId]);
             AllPaths[pathId] = updatedPath;
-            Debug.Log("UpdateWallVerticesByPath2");
+//            Debug.Log("UpdateWallVerticesByPath2");
             if (WallSegmentsByPath.TryGetValue(pathId, out List<WallSegment> wallSegments) && wallSegments != null)
             {
-                Debug.Log("UpdateWallVerticesByPath3");
+                //Debug.Log("UpdateWallVerticesByPath3");
                 for (int i = 0; i < wallSegments.Count; i++)
                 {
                     int startIdx = i;
